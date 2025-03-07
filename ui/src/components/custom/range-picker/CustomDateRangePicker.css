@@ -1,0 +1,93 @@
+.date-range-wrapper {
+  position: absolute;
+  top: 60px;
+  right: 60px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem;
+  z-index: 99999;
+  background-color: hsl(220, 20%, 8.399999999999999%);
+}
+
+.Mui-selected {
+  background-color: var(--template-palette-primary-main) !important;
+}
+
+.MuiDayCalendar-monthContainer {
+  overflow: unset !important;
+}
+.day-range {
+  background-color: rgba(0, 89, 179, 0.3);
+}
+.day-start:has(.Mui-selected:focus) {
+  background: unset !important;
+}
+
+.day-start {
+  background: linear-gradient(
+    to right,
+    transparent 50%,
+    rgba(0, 89, 179, 0.3) 50%
+  );
+}
+.day-end {
+  background: linear-gradient(
+    to left,
+    transparent 50%,
+    rgba(0, 89, 179, 0.3) 50%
+  );
+}
+
+*:where([data-mui-color-scheme="light"]) .date-range-wrapper {
+  background: white;
+}
+*:where([data-mui-color-scheme="light"]) .day-range {
+  background-color: rgba(0, 89, 179, 0.15);
+}
+
+*:where([data-mui-color-scheme="light"]) .day-end {
+  background: linear-gradient(
+    to left,
+    transparent 50%,
+    rgba(0, 89, 179, 0.15) 50%
+  );
+}
+
+*:where([data-mui-color-scheme="light"]) .day-start {
+  background: linear-gradient(
+    to right,
+    transparent 50%,
+    rgba(0, 89, 179, 0.15) 50%
+  );
+}
+@media (max-width: 600px) {
+  .date-range-wrapper {
+    top: 60px;
+    right: 0px;
+    border-radius: 0;
+    background-color: var(--template-palette-AppBar-darkBg);
+    box-shadow: none;
+    height: 100vh;
+  }
+  *:where([data-mui-color-scheme="light"]) .date-range-wrapper {
+    background-color: var(--template-palette-background-paper);
+  }
+
+  .toolbar-button {
+    /* font-size: 0.7rem !important; */
+    margin-right: 0;
+  }
+
+  .date-range-wrapper .MuiBox-root {
+    flex-direction: column;
+    height: unset;
+    width: 100vw;
+  }
+
+  .toolbar-container > div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 10px; /* Space between buttons */
+    padding: 0 20px 20px 20px; /* Padding around the container */
+  }
+}

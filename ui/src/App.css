@@ -1,0 +1,26 @@
+.MuiDataGrid-root {
+  .MuiDataGrid-cell:focus,
+  .MuiDataGrid-cell:focus-within,
+  .MuiDataGrid-columnHeader:focus,
+  .MuiDataGrid-columnHeader:focus-within {
+    outline: none !important;
+  }
+}
+
+.MuiDataGrid-cell {
+  line-height: calc(var(--height) - 2px) !important;
+}
+
+.MuiDataGrid-filterForm .MuiSelect-root {
+  border: none;
+  box-shadow: none;
+}
+
+.MuiDataGrid-paper.MuiPaper-elevation {
+  margin-top: 1px;
+}
+
+/* .MuiDialog-paper:has(.toolbar-container) { */
+/*   margin: 0; */
+/*   max-width: 100%; */
+/* } */
