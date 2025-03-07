@@ -60,7 +60,7 @@ const CustomDateRangePicker = ({ ...restProps }: DateRangePickerProps) => {
       endDate: end?.format("YYYY-MM-DD") || "",
     });
 
-    localStorage.setItem(
+    sessionStorage.setItem(
       "date-picker-filter",
       JSON.stringify({ ...datePickerFilter.getValue(), buttonText }),
     );
@@ -103,7 +103,7 @@ const CustomDateRangePicker = ({ ...restProps }: DateRangePickerProps) => {
   };
 
   useEffect(() => {
-    const localFilter = localStorage.getItem("date-picker-filter");
+    const localFilter = sessionStorage.getItem("date-picker-filter");
     if (localFilter) {
       const { startDate, endDate, buttonText } = JSON.parse(localFilter);
       const startMoment = moment(startDate);

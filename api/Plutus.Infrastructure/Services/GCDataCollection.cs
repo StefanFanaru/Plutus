@@ -9,13 +9,13 @@ namespace Plutus.Infrastructure.Services;
 public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection> logger, AppDbContext dbContext, GCInsertData insertDataService)
 {
 
-    public async Task CollectData()
+    public async Task CollectData(string userId)
     {
-        await GetBalanceAsync();
-        await GetTransactionsAsync();
+        await GetBalanceAsync(userId);
+        await GetTransactionsAsync(userId);
     }
 
-    private async Task GetTransactionsAsync()
+    private async Task GetTransactionsAsync(string userId)
     {
         var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Trasations);
 
@@ -26,10 +26,10 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
         }
 
         var transactions = await getDataService.GetTransactionsAsync();
-        await insertDataService.InsertData(transactions);
+        await insertDataService.InsertData(transactions, userId);
     }
 
-    private async Task GetBalanceAsync()
+    private async Task GetBalanceAsync(string userId)
     {
         var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Balance);
 
@@ -43,6 +43,7 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
         await dbContext.BalanceAudits.AddAsync(new RevolutBalanceAudit
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = userId,
             Amount = balance,
             RecordedAt = DateTime.UtcNow
         });
@@ -50,6 +51,7 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
         await dbContext.GoCardlessRequests.AddAsync(new GoCardlessRequest
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = userId,
             Type = GoCardlessRequestType.Balance,
             MadeAt = DateTime.UtcNow
         });

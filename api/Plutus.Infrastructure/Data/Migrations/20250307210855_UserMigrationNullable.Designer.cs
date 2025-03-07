@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Plutus.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Plutus.Infrastructure.Data;
 namespace Plutus.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250307210855_UserMigrationNullable")]
+    partial class UserMigrationNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,8 +100,6 @@ namespace Plutus.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("GoCardlessRequests", "plutus");
                 });
 
@@ -131,8 +132,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Obligors", "plutus");
                 });
 
@@ -155,8 +154,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(36)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("BalanceAudits", "plutus");
                 });
@@ -213,8 +210,6 @@ namespace Plutus.Infrastructure.Data.Migrations
 
                     b.HasIndex("OriginalTransactionId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Transactions", "plutus");
                 });
 
@@ -254,39 +249,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                     b.ToTable("Users", "plutus");
                 });
 
-            modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.GoCardlessRequest", b =>
-                {
-                    b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.Obligor", b =>
-                {
-                    b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.RevolutBalanceAudit", b =>
-                {
-                    b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.Transaction", b =>
                 {
                     b.HasOne("Plutus.Infrastructure.Data.Entities.Category", "Category")
@@ -303,19 +265,11 @@ namespace Plutus.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("OriginalTransactionId");
 
-                    b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
 
                     b.Navigation("Obligor");
 
                     b.Navigation("OriginalTransaction");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

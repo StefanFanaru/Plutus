@@ -162,6 +162,9 @@ export default function CategoriesTable() {
       paginationMode="server"
       sortingMode="server"
       filterMode="server"
+      localeText={{
+        noRowsLabel: "No rows matching this filter",
+      }}
       rowCount={totalCount}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"

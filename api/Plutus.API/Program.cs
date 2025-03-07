@@ -53,7 +53,9 @@ builder.Services.AddScoped<DashboardSpendingThisWeek>();
 builder.Services.AddScoped<DashboardSpendingByCategory>();
 builder.Services.AddScoped<ChangeObligorFixedExpense>();
 builder.Services.AddScoped<IDateFilterInfo, DateFilterInfo>();
+builder.Services.AddScoped<IUserInfo, UserInfo>();
 builder.Services.AddScoped<DashboardSpendingByObligor>();
+builder.Services.AddScoped<ValidateUser>();
 
 AddAllDataMigrations();
 

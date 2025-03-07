@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Data;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardStats(AppDbContext dbContext)
+public class DashboardStats(IUserInfo userInfo, AppDbContext dbContext)
 {
 
     public async Task<Response> GetAsync()
@@ -18,6 +20,7 @@ public class DashboardStats(AppDbContext dbContext)
     private async Task<LastTransaction> GetLastTransactionAsync()
     {
         var lastTransaction = await dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .OrderByDescending(x => x.BookingDate)
             .Select(x => new LastTransaction
             {
@@ -33,13 +36,21 @@ public class DashboardStats(AppDbContext dbContext)
     private async Task<BalanceDetails> GetBalanceDetailsAsync()
     {
         var balance = await dbContext.BalanceAudits
+            .ApplyUserFilter(userInfo.Id)
             .OrderByDescending(x => x.RecordedAt)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
+
+        if (balance == null)
+        {
+            return new BalanceDetails();
+        }
+
 
         // get balance per day for the last 30 days
         // group record per day and use the last record of the day
         // Get balance per day for the last 30 days
         var balancePerDay = await dbContext.BalanceAudits
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.RecordedAt.Date > DateTime.UtcNow.AddDays(-30).Date) // Filter for the last 30 days
             .GroupBy(x => x.RecordedAt.Date)
             .Select(g => new
@@ -97,7 +108,7 @@ public class DashboardStats(AppDbContext dbContext)
     public class BalanceDetails
     {
         public decimal Balance { get; set; }
-        public DateTime RecordedAt { get; set; }
-        public List<decimal> BalancePerDay { get; set; }
+        public DateTime? RecordedAt { get; set; }
+        public List<decimal> BalancePerDay { get; set; } = [];
     }
 }

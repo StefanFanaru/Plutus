@@ -1,10 +1,12 @@
-using Microsoft.EntityFrameworkCore;
 using Plutus.Infrastructure.Data;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardSpendingThisWeek(AppDbContext dbContext)
+public class DashboardSpendingThisWeek(IUserInfo userInfo, AppDbContext dbContext)
 {
     public async Task<Response> GetAsync(Request request)
     {
@@ -17,6 +19,11 @@ public class DashboardSpendingThisWeek(AppDbContext dbContext)
             x.Amount,
             x.BookingDate
         });
+
+        if (!transactions.Any())
+        {
+            return new Response();
+        }
 
         var result = new List<SpentByCategoryItem>();
         var days = (request.EndDate - request.StartDate).Days;
@@ -58,6 +65,7 @@ public class DashboardSpendingThisWeek(AppDbContext dbContext)
     private IQueryable<Transaction> Query(DateTime startDate, DateTime endDate)
     {
         return dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.BookingDate.Date >= startDate.Date && x.BookingDate.Date <= endDate.Date)
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => !x.IsExcluded)
@@ -79,7 +87,7 @@ public class DashboardSpendingThisWeek(AppDbContext dbContext)
 
     public class Response
     {
-        public List<SpentByCategoryItem> SpentByCategoryItems { get; set; }
+        public List<SpentByCategoryItem> SpentByCategoryItems { get; set; } = [];
         public decimal TotalSpent { get; set; }
         public decimal PercentageSpendingChange { get; set; }
     }

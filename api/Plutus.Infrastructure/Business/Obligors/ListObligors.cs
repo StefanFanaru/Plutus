@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Helpers;
 using Plutus.Infrastructure.Dtos;
 
 namespace Plutus.Infrastructure.Business.Obligors
 {
-    public class ListObligors(AppDbContext context)
+    public class ListObligors(IUserInfo userInfo, AppDbContext context)
     {
         public async Task<ListResponse<ObligorListItem>> Get(ListRequest request)
         {
-            var query = context.Obligors.AsQueryable();
-            var mappedQuery = query
+            var query = context.Obligors
+                .ApplyUserFilter(userInfo.Id)
                 .Select(obligor => new ObligorListItem
                 {
                     Id = obligor.Id,
@@ -24,14 +25,16 @@ namespace Plutus.Infrastructure.Business.Obligors
 
                 })
                 .Where(obligor => obligor.TotalTransactionsCount > 0)
+                .ApplyFilter(request.Filter);
+
+            var pagedQuery = query
                 .ApplySorting(request.SortField, request.SortOrder)
-                .ApplyFilter(request.Filter)
                 .ApplyPaging(request.PageNumber, request.PageSize);
 
             return new ListResponse<ObligorListItem>
             {
-                Items = await mappedQuery.ToListAsync(),
-                TotalCount = await context.Obligors.CountAsync()
+                Items = await pagedQuery.ToListAsync(),
+                TotalCount = await query.CountAsync()
             };
 
         }

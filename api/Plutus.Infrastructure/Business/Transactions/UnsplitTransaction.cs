@@ -1,14 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.Infrastructure.Abstractions;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Transactions
 {
-    public class UnsplitTransaction(AppDbContext context)
+    public class UnsplitTransaction(IUserInfo userInfo, AppDbContext context)
     {
         public async Task<bool> Unsplit(string transactionId)
         {
             var originalTransactionId = await context.Transactions
+                .ApplyUserFilter(userInfo.Id)
                 .Where(transaction => transaction.Id == transactionId)
                 .Select(transaction => transaction.OriginalTransactionId)
                 .SingleAsync();
@@ -34,6 +37,7 @@ namespace Plutus.Infrastructure.Business.Transactions
                         .UpdateFromQueryAsync(transaction => new Transaction
                         {
                             Id = transaction.Id,
+                            UserId = transaction.UserId,
                             CategoryId = transaction.CategoryId,
                             IsExcluded = false,
                             IsSplit = false

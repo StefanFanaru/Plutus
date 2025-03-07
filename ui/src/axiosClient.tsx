@@ -17,7 +17,7 @@ function handleDatePickerFilterHeader(config) {
   let axiosDatePickerHeader = datePickerFilter.getValue()!;
 
   if (!axiosDatePickerHeader) {
-    const localFilter = localStorage.getItem("date-picker-filter");
+    const localFilter = sessionStorage.getItem("date-picker-filter");
     if (localFilter) {
       const { startDate, endDate } = JSON.parse(localFilter);
       axiosDatePickerHeader = {
@@ -27,7 +27,7 @@ function handleDatePickerFilterHeader(config) {
     }
   }
 
-  if (axiosDatePickerHeader.startDate && axiosDatePickerHeader.endDate) {
+  if (axiosDatePickerHeader?.startDate && axiosDatePickerHeader?.endDate) {
     config.headers["Date-Filter"] =
       `${axiosDatePickerHeader.startDate};${axiosDatePickerHeader.endDate}`;
   }

@@ -205,6 +205,9 @@ export default function ObligorsTable() {
       sortingMode="server"
       filterMode="server"
       rowCount={totalCount}
+      localeText={{
+        noRowsLabel: "No rows matching this filter",
+      }}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
       }

@@ -7,11 +7,11 @@ WORKDIR /src
 # Copy the entire project and build it
 COPY . .
 WORKDIR "/src"
-RUN dotnet build "Plutus.Infrastructure.csproj" -c Release -o /app/build
+RUN dotnet build "Plutus.API/Plutus.API.csproj" -c Release -o /app/build
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish "Plutus.Infrastructure.csproj" -c Release -o /app/publish
+RUN dotnet publish "Plutus.API/Plutus.API.csproj" -c Release -o /app/publish
 
 # Use the official .NET runtime image to run the application
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
@@ -26,5 +26,5 @@ ENV ASPNETCORE_URLS="http://+:80"
 EXPOSE 80
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "Plutus.Infrastructure.dll"]
+ENTRYPOINT ["dotnet", "Plutus.API.dll"]
 

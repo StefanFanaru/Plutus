@@ -12,6 +12,7 @@ import DashboardInfoCard, {
 import axiosClient from "../axiosClient";
 import DashboardSpendingThisWeek from "../components/mui/DashboardSpendingThisWeek";
 import DashboardSpendingByCategory from "../components/mui/DashboardSpendingByCategory";
+import DashboardSpendingByObligor from "../components/mui/DashboardSpendingByObligor";
 
 export interface DashboardStats {
   balanceDetails: BalanceDetails;
@@ -43,6 +44,9 @@ export default function Dashboard() {
     );
 
     const balanceDetails = response.data.balanceDetails;
+    if (!balanceDetails) {
+      return;
+    }
     setBalanceDetails({
       title: "Balance",
       value: addCommasToNumber(balanceDetails.balance, false) + " RON",
@@ -55,6 +59,9 @@ export default function Dashboard() {
     });
 
     const lastTransaction = response.data.lastTransaction;
+    if (!lastTransaction) {
+      return;
+    }
     setLastTransaction({
       title: "Latest Transaction",
       value: addCommasToNumber(lastTransaction.amount, false) + " RON",
@@ -80,12 +87,20 @@ export default function Dashboard() {
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        <Grid size={{ xs: 12, sm: 6, lg: 9 }}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: lastTransaction ? 6 : 12,
+            lg: lastTransaction ? 9 : 12,
+          }}
+        >
           {balanceDetails && <StatCard {...balanceDetails} />}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          {lastTransaction && <DashboardInfoCard {...lastTransaction} />}
-        </Grid>
+        {lastTransaction && (
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+            <DashboardInfoCard {...lastTransaction} />
+          </Grid>
+        )}
         <Grid size={{ xs: 12, md: 6 }}>
           <DashboardSpendingStats />
         </Grid>
@@ -96,6 +111,9 @@ export default function Dashboard() {
       <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <DashboardSpendingByCategory />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <DashboardSpendingByObligor />
         </Grid>
       </Grid>
       <Copyright sx={{ my: 4 }} />

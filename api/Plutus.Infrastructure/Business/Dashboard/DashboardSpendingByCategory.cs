@@ -1,22 +1,30 @@
 using Microsoft.EntityFrameworkCore;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardSpendingByCategory(AppDbContext dbContext)
+public class DashboardSpendingByCategory(IUserInfo userInfo, AppDbContext dbContext)
 {
     public async Task<Response> GetAsync()
     {
         var categories = await dbContext.Categories.ToListAsync();
 
         var transactions = await dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.BookingDate.Date >= DateTime.UtcNow.AddDays(-30))
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => x.IsCredit)
             .Where(x => !x.IsExcluded)
             .Select(x => new { x.Amount, x.CategoryId })
             .ToListAsync();
+
+        if (transactions.Count == 0)
+        {
+            return new Response();
+        }
 
         var totalSpent = transactions.Sum(x => x.Amount);
         var response = new Response
@@ -67,6 +75,6 @@ public class DashboardSpendingByCategory(AppDbContext dbContext)
 
     public class Response
     {
-        public List<SpentByCategoryItem> Items { get; set; }
+        public List<SpentByCategoryItem> Items { get; set; } = [];
     }
 }

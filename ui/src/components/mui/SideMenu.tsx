@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import MuiDrawer, { drawerClasses } from "@mui/material/Drawer";
@@ -69,6 +68,7 @@ export default function SideMenu() {
         }}
       >
         <Avatar
+          src={auth.user?.profile.picture}
           sizes="small"
           alt={auth.user?.profile.name}
           sx={{ width: 36, height: 36 }}

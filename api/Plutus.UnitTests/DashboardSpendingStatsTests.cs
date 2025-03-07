@@ -1,19 +1,26 @@
 ﻿using Plutus.Infrastructure.Business.Dashboard;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.UnitTests.TestDtos;
 
 namespace Plutus.UnitTests;
 
 public class DashboardSpendingStatsTests : IDisposable
 {
     private AppDbContext _context;
+    private readonly TestUserInfo _userInfo;
     private readonly string _obligorId = Guid.NewGuid().ToString();
     private readonly string _categoryId = Guid.NewGuid().ToString();
+    private readonly string _userId = Guid.NewGuid().ToString();
 
 
     public DashboardSpendingStatsTests()
     {
         _context = TestHelpers.GetDbContext();
+        _userInfo = new TestUserInfo
+        {
+            Id = _userId
+        };
     }
 
     public void Dispose()
@@ -37,6 +44,7 @@ public class DashboardSpendingStatsTests : IDisposable
         var obligor = new Obligor
         {
             Id = _obligorId,
+            UserId = _userId,
             Name = "Test Obligor",
             DisplayName = "Test Obligor",
             IsForFixedExpenses = false
@@ -59,6 +67,7 @@ public class DashboardSpendingStatsTests : IDisposable
             var transaction = new Transaction
             {
                 Id = Guid.NewGuid().ToString(),
+                UserId = _userId,
                 BookingDate = DateTime.UtcNow.AddDays(-i),
                 Amount = 1 * i,
                 ObligorId = obligor.Id,
@@ -79,13 +88,14 @@ public class DashboardSpendingStatsTests : IDisposable
     public async Task Is_returning_correct_spend_per_day()
     {
         ResetDatabase();
-        var dashboardSpendingStats = new DashboardSpendingStats(_context);
+        var dashboardSpendingStats = new DashboardSpendingStats(_userInfo, _context);
 
         await SeedDatabase();
 
         var transaction1 = new Transaction
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = _userId,
             BookingDate = DateTime.UtcNow,
             Amount = 10.5m,
             ObligorId = _obligorId,
@@ -97,6 +107,7 @@ public class DashboardSpendingStatsTests : IDisposable
         var transaction2 = new Transaction
         {
             Id = Guid.NewGuid().ToString(),
+            UserId = _userId,
             BookingDate = DateTime.UtcNow,
             Amount = 11.5m,
             ObligorId = _obligorId,
@@ -128,7 +139,7 @@ public class DashboardSpendingStatsTests : IDisposable
     [Fact]
     public async Task Projection_and_median_is_correct()
     {
-        var dashboardSpendingStats = new DashboardSpendingStats(_context);
+        var dashboardSpendingStats = new DashboardSpendingStats(_userInfo, _context);
 
         await SeedDatabase();
 
@@ -137,6 +148,7 @@ public class DashboardSpendingStatsTests : IDisposable
             var transaction = new Transaction
             {
                 Id = Guid.NewGuid().ToString(),
+                UserId = _userId,
                 BookingDate = DateTime.UtcNow.AddDays(-days),
                 Amount = amount,
                 ObligorId = _obligorId,

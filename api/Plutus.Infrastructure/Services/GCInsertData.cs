@@ -9,7 +9,7 @@ namespace Plutus.Infrastructure.Services;
 
 public class GCInsertData(AppDbContext dbContext)
 {
-    public async Task InsertData(GoCardlessTransactionsReponse transactions)
+    public async Task InsertData(GoCardlessTransactionsReponse transactions, string userId)
     {
         var ignoredTransactions = new string[] { "TOPUP", "EXCHANGE", "FEE" };
         var bookedTransactions = transactions.Transactions.Booked
@@ -20,14 +20,13 @@ public class GCInsertData(AppDbContext dbContext)
             .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || x.ProprietaryBankTransactionCode != "TRANSFER")
             .Where(x => !string.IsNullOrEmpty(x.CreditorName) || !string.IsNullOrEmpty(x.DebtorName));
 
-
-
-        await InsertObligors(bookedTransactions);
+        await InsertObligors(bookedTransactions, userId);
         var obligors = dbContext.Obligors.ToList();
 
         var transactionBookedEntitties = bookedTransactions.Select(t => new Transaction
         {
             Id = t.TransactionId,
+            UserId = userId,
             Type = t.GetTransactionType(),
             Amount = t.TransactionAmount.Amount,
             BookingDate = t.BookingDateTime,
@@ -72,7 +71,7 @@ public class GCInsertData(AppDbContext dbContext)
         return name;
     }
 
-    public async Task InsertObligors(IEnumerable<GCBooked> bookedTransactions)
+    public async Task InsertObligors(IEnumerable<GCBooked> bookedTransactions, string userId)
     {
         var fixedExpensesObligorsPath = Path.Combine(Directory.GetCurrentDirectory(), "fixed_expenses_obligors.json");
         var fixedExpensesObligorsJson = await File.ReadAllTextAsync(fixedExpensesObligorsPath);
@@ -96,6 +95,7 @@ public class GCInsertData(AppDbContext dbContext)
             .Distinct().Select(x => new Obligor
             {
                 Id = Guid.NewGuid().ToString(),
+                UserId = userId,
                 Name = x,
                 DisplayName = FormatName(x),
                 IsForFixedExpenses = fixedExpensesObligors.Contains(x)

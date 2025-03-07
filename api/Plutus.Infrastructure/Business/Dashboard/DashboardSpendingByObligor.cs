@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Plutus.Infrastructure.Data;
+using Plutus.Infrastructure.Abstractions;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardSpendingByObligor(AppDbContext dbContext)
+public class DashboardSpendingByObligor(IUserInfo userInfo, AppDbContext dbContext)
 {
     public async Task<Response> GetAsync()
     {
         var transactions = await dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.BookingDate.Date >= DateTime.UtcNow.AddDays(-30))
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => x.IsCredit)
@@ -67,6 +70,6 @@ public class DashboardSpendingByObligor(AppDbContext dbContext)
 
     public class Response
     {
-        public List<SpentByObligorItem> Items { get; set; }
+        public List<SpentByObligorItem> Items { get; set; } = [];
     }
 }

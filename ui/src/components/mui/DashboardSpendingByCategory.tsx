@@ -108,8 +108,6 @@ export default function DashboardSpendingByCategory() {
             series={[
               {
                 data: graphData,
-                arcLabel: (item) => `${item.label}`,
-                arcLabelMinAngle: 35,
                 outerRadius: 120,
                 highlightScope: { faded: "global", highlighted: "item" },
                 valueFormatter: (value) =>

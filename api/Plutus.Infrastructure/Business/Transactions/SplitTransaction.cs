@@ -1,15 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Transactions
 {
-    public class SplitTransaction(AppDbContext context)
+    public class SplitTransaction(IUserInfo userInfo, AppDbContext context)
     {
         public async Task<bool> Split(Request request)
         {
             var sumOfSplits = request.Splits.Sum(split => split.Amount);
             var originalTransaction = await context.Transactions
+                .ApplyUserFilter(userInfo.Id)
                 .Where(transaction => transaction.Id == request.TransactionId)
                 .SingleAsync();
 
@@ -29,6 +32,7 @@ namespace Plutus.Infrastructure.Business.Transactions
                         var newTransaction = new Transaction
                         {
                             Id = Guid.NewGuid().ToString(),
+                            UserId = userInfo.Id,
                             BookingDate = originalTransaction.BookingDate,
                             Amount = isNegativeAmount ? -split.Amount : split.Amount,
                             Type = originalTransaction.Type,
@@ -51,6 +55,7 @@ namespace Plutus.Infrastructure.Business.Transactions
                         var newTransaction = new Transaction
                         {
                             Id = Guid.NewGuid().ToString(),
+                            UserId = userInfo.Id,
                             BookingDate = originalTransaction.BookingDate,
                             Amount = isNegativeAmount ? -remainingAmount : remainingAmount,
                             Type = originalTransaction.Type,

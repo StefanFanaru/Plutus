@@ -14,6 +14,7 @@ public class FixedCategoryDataMigration(AppDbContext appDbContext) : IDataMigrat
             .UpdateFromQueryAsync(x => new Transaction
             {
                 Id = x.Id,
+                UserId = x.UserId,
                 CategoryId = AppConstants.FixedCategoryId
             });
     }

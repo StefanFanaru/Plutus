@@ -63,7 +63,7 @@ function App() {
   function checkServerStatus() {
     setIsServerOnlineLoading(true);
     axiosClient
-      .get("/api/misc/authenticated-status", {
+      .get("/api/misc/validate-user", {
         timeout: 1000,
       })
       .then((response) => {

@@ -28,12 +28,19 @@ public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IS
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var gCDataCollection = scope.ServiceProvider.GetRequiredService<GCDataCollection>();
 
-        var lastRequest = dbContext.GoCardlessRequests.OrderByDescending(x => x.MadeAt).FirstOrDefault();
+        var users = dbContext.Users.ToList();
 
-        if (lastRequest == null || lastRequest.MadeAt < DateTime.UtcNow.AddHours(-6))
+        foreach (var user in users)
         {
-            _logger.LogInformation("Making a new GoCardless request.");
-            await gCDataCollection.CollectData();
+            var lastRequest = dbContext.GoCardlessRequests
+                .OrderByDescending(x => x.MadeAt)
+                .FirstOrDefault(x => x.UserId == user.Id);
+
+            if (lastRequest == null || lastRequest.MadeAt < DateTime.UtcNow.AddHours(-6))
+            {
+                _logger.LogInformation("Making a new GoCardless request.");
+                await gCDataCollection.CollectData(user.Id);
+            }
         }
     }
 

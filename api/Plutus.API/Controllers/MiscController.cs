@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Plutus.Infrastructure.Abstractions;
 using Plutus.Infrastructure.Services;
 
 namespace Plutus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MiscController(IServiceProvider serviceProvider) : ControllerBase
+    public class MiscController(IServiceProvider serviceProvider, IUserInfo userInfo) : ControllerBase
     {
 
         [HttpGet("get-data")]
         public async Task<IActionResult> Get()
         {
-            await serviceProvider.GetRequiredService<GCDataCollection>().CollectData();
+            await serviceProvider.GetRequiredService<GCDataCollection>().CollectData(userInfo.Id);
             return Ok();
         }
 
@@ -23,10 +24,17 @@ namespace Plutus.API.Controllers
             return Ok(new { Status = "Healthy" });
         }
 
-        [HttpGet("authenticated-status")]
-        public IActionResult AuthenticatedStatus()
+        [HttpGet("validate-user")]
+        public async Task<IActionResult> AuthenticatedStatus()
         {
-            return Ok(new { Status = "Healthy" });
+            var isValid = await serviceProvider.GetRequiredService<ValidateUser>().IsValidUser();
+            return Ok(new { Status = "Valid" });
+        }
+
+        [HttpGet("user-info")]
+        public IActionResult GetUserinfo()
+        {
+            return Ok(userInfo);
         }
     }
 }

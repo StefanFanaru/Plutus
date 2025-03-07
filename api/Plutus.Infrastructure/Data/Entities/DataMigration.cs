@@ -1,10 +1,16 @@
+#nullable enable
+using System.ComponentModel.DataAnnotations;
+
 namespace Plutus.Infrastructure.Data.Entities;
 
 public class DataMigration
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Type { get; set; }
+    [MaxLength(36)]
+    public required string Id { get; set; }
+    [MaxLength(100)]
+    public required string Name { get; set; }
+    [MaxLength(100)]
+    public required string Type { get; set; }
     public DateTime InsertTime { get; set; }
 }
 

@@ -46,7 +46,7 @@ const colors = [
   "hsl(220, 20%, 25%)",
 ];
 
-export default function DashboardSpendingByCategory() {
+export default function DashboardSpendingByObligor() {
   const [graphData, setGraphData] = React.useState<GraphData[]>([]);
   const [graphItems, setGraphItems] = React.useState<GraphItem[]>([]);
 
@@ -57,7 +57,7 @@ export default function DashboardSpendingByCategory() {
 
   const fetch = async () => {
     const response = await axiosClient.get<SpendingData>(
-      "/api/Dashboard/spending-by-category",
+      "/api/Dashboard/spending-by-obligor",
     );
     const data = response.data.items.map((item) => ({
       label: item.obligorName,
@@ -86,10 +86,10 @@ export default function DashboardSpendingByCategory() {
     >
       <CardContent>
         <Typography component="h2" variant="subtitle2">
-          Spending by category
+          Spending by obligor
         </Typography>
         <Typography variant="caption" sx={{ color: "text.secondary" }}>
-          Spening by category for the last 30 days
+          Spening by obligor for the last 30 days
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
           <PieChart
@@ -108,8 +108,6 @@ export default function DashboardSpendingByCategory() {
             series={[
               {
                 data: graphData,
-                arcLabel: (item) => `${item.label}`,
-                arcLabelMinAngle: 35,
                 outerRadius: 120,
                 highlightScope: { faded: "global", highlighted: "item" },
                 valueFormatter: (value) =>

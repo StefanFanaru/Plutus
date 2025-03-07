@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 
 namespace Plutus.API.Asp;
-public class PlutusUserHandler : AuthorizationHandler<PlutusUserRequirement>
+public class PlutusUserHandler(IConfiguration configuration) : AuthorizationHandler<PlutusUserRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PlutusUserRequirement requirement)
     {
@@ -9,15 +9,23 @@ public class PlutusUserHandler : AuthorizationHandler<PlutusUserRequirement>
 
         if (resourceAccess != null)
         {
+            var clientId = configuration["AuthClientId"];
             var resourceAccessJson = System.Text.Json.JsonDocument.Parse(resourceAccess);
+            if (!resourceAccessJson.RootElement.TryGetProperty(clientId, out var client))
+            {
+                return Task.CompletedTask;
+            }
+
             var roles = resourceAccessJson.RootElement
-                .GetProperty("plutus-local")
+                .GetProperty(clientId)
                 .GetProperty("roles");
 
             if (roles.EnumerateArray().Any(role => role.GetString() == "plutus-user"))
             {
                 context.Succeed(requirement);
             }
+
+            return Task.CompletedTask;
         }
 
         return Task.CompletedTask;

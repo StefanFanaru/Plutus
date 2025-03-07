@@ -7,11 +7,12 @@ using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Transactions
 {
-    public class ListTransactions(AppDbContext context, IDateFilterInfo dateFilterInfo)
+    public class ListTransactions(IUserInfo userInfo, AppDbContext context, IDateFilterInfo dateFilterInfo)
     {
         public async Task<ListResponse<TransactionListItem>> Get(ListRequest request)
         {
             var query = context.Transactions
+                .ApplyUserFilter(userInfo.Id)
                 .Where(transaction => !transaction.IsSplit)
                 .Select(transaction => new TransactionListItem
                 {

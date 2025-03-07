@@ -65,7 +65,7 @@ export default function DashboardSpendingStats() {
       area: true,
       stackOrder: "ascending",
       valueFormatter: (value) => addCommasToNumber(value!) + " RON",
-      data: data,
+      data: data ?? [],
     });
 
     const spent25DaysDates = response.data.spentPerDayLast25Days.map(

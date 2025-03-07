@@ -7,6 +7,22 @@ namespace Plutus.Infrastructure.Helpers;
 
 public static class QueriableExtensions
 {
+    public static IQueryable<T> ApplyUserFilter<T>(this IQueryable<T> query, string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return query;
+        }
+
+        var parameter = Expression.Parameter(typeof(T), "e");
+        var property = Expression.Property(parameter, "UserId");
+        var value = Expression.Constant(userId);
+        var comparisonExpression = Expression.Equal(property, value);
+
+        var lambda = Expression.Lambda<Func<T, bool>>(comparisonExpression, parameter);
+
+        return query.Where(lambda);
+    }
 
     public static IQueryable<T> ApplyDateFilter<T>(this IQueryable<T> query, string dateProperty, IDateFilterInfo dateFilterInfo)
     {

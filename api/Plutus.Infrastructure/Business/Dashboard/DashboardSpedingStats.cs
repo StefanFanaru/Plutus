@@ -1,14 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Plutus.Infrastructure.Data;
+using Plutus.Infrastructure.Abstractions;
+using Plutus.Infrastructure.Helpers;
 
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardSpendingStats(AppDbContext dbContext)
+public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
 {
-
     public async Task<Response> GetAsync()
     {
         var spentLast30Days = await QueryTransactions(50, 0, 30).ToListAsync();
+
+        if (spentLast30Days.Count == 0)
+        {
+            return new Response();
+        }
 
         var spentLast30DaysExact = await SumTransactionsInInterval(30, 0);
         var spentLastLast30DaysExact = await SumTransactionsInInterval(60, 31);
@@ -19,7 +25,6 @@ public class DashboardSpendingStats(AppDbContext dbContext)
             ProjectionNext5Days = MakeProjection([.. spentLast30Days.Select(x => x.Amount)]),
             TotalSpendLast30Days = spentLast30DaysExact,
             PercentageSpendingChange = (int)Math.Round((spentLast30DaysExact - spentLastLast30DaysExact) / spentLastLast30DaysExact * 100)
-
         };
 
         return response;
@@ -28,6 +33,7 @@ public class DashboardSpendingStats(AppDbContext dbContext)
     private IQueryable<Response.SpentPerDay> QueryTransactions(int daysBack, int skip, int take)
     {
         return dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.BookingDate.Date >= DateTime.UtcNow.AddDays(-daysBack))
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => x.IsCredit)
@@ -52,6 +58,7 @@ public class DashboardSpendingStats(AppDbContext dbContext)
     private Task<decimal> SumTransactionsInInterval(int daysBack, int daysBackLimit)
     {
         return dbContext.Transactions
+            .ApplyUserFilter(userInfo.Id)
             .Where(x => x.BookingDate.Date >= DateTime.UtcNow.AddDays(-daysBack).Date && x.BookingDate.Date <= DateTime.UtcNow.AddDays(-daysBackLimit).Date)
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => !x.IsExcluded)
@@ -112,8 +119,8 @@ public class DashboardSpendingStats(AppDbContext dbContext)
 
     public class Response
     {
-        public List<SpentPerDay> SpentPerDayLast25Days { get; set; }
-        public List<SpentPerDay> ProjectionNext5Days { get; set; }
+        public List<SpentPerDay> SpentPerDayLast25Days { get; set; } = [];
+        public List<SpentPerDay> ProjectionNext5Days { get; set; } = [];
         public decimal TotalSpendLast30Days { get; set; }
         public int PercentageSpendingChange { get; set; }
 

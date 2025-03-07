@@ -1,9 +1,9 @@
 export function addCommasToNumber(
-  number: number | undefined,
+  number: number | undefined | null,
   forceDecimals: boolean = true,
 ): string {
-  if (number === undefined) {
-    return "";
+  if (!number) {
+    return "0.00";
   }
   // Convert the number to a string
   const strNumber = number.toFixed(2);

@@ -203,6 +203,9 @@ export default function TransactionsTable(props: Props) {
       paginationMode="server"
       sortingMode="server"
       filterMode="server"
+      localeText={{
+        noRowsLabel: "No rows matching this filter",
+      }}
       rowCount={state.totalCount}
       disableRowSelectionOnClick
       getRowClassName={(params) => {

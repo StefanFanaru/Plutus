@@ -2,10 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Helpers;
 using Plutus.Infrastructure.Dtos;
+using Plutus.Infrastructure.Abstractions;
+using Plutus.Infrastructure.Data.Entities;
 
 namespace Plutus.Infrastructure.Business.Categories
 {
-    public class ListCategories(AppDbContext context)
+    public class ListCategories(IUserInfo userInfo, AppDbContext context)
     {
         public async Task<List<CategoryDto>> GetAll()
         {
@@ -25,9 +27,20 @@ namespace Plutus.Infrastructure.Business.Categories
                 {
                     Id = category.Id,
                     Name = category.Name,
-                    AmmountCreditedThisMonth = context.Transactions.Where(t => t.CategoryId == category.Id && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30)).Sum(t => t.Amount),
-                    TotalAmmountCredited = context.Transactions.Where(t => t.CategoryId == category.Id && t.IsCredit).Sum(t => t.Amount),
-                    LatestTransaction = context.Transactions.Where(t => t.CategoryId == category.Id).OrderByDescending(t => t.BookingDate).Select(t => t.BookingDate).FirstOrDefault(),
+                    AmmountCreditedThisMonth = context.Transactions
+                        .ApplyUserFilter(userInfo.Id)
+                        .Where(t => t.CategoryId == category.Id && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30))
+                        .Sum(t => t.Amount),
+                    TotalAmmountCredited = context.Transactions
+                        .ApplyUserFilter(userInfo.Id)
+                        .Where(t => t.CategoryId == category.Id && t.IsCredit)
+                        .Sum(t => t.Amount),
+                    LatestTransaction = context.Transactions
+                        .Where(t => t.UserId == userInfo.Id)
+                        .Where(t => t.CategoryId == category.Id)
+                        .OrderByDescending(t => t.BookingDate)
+                        .Select(t => (DateTime?)t.BookingDate)
+                        .FirstOrDefault(),
                 })
                 .ApplySorting(request.SortField, request.SortOrder)
                 .ApplyFilter(request.Filter)
@@ -44,6 +57,7 @@ namespace Plutus.Infrastructure.Business.Categories
         public async Task<List<CategoryCreditedPerMonthItem>> GetAmmountCreditedPerMonth(List<string> ids)
         {
             var ammountCreditedPerMonth = await context.Transactions
+                .ApplyUserFilter(userInfo.Id)
                 .Where(t => ids.Contains(t.CategoryId))
                 .Where(t => t.BookingDate >= DateTime.UtcNow.AddMonths(-11))
                 .GroupBy(t => new { t.CategoryId, t.BookingDate.Year, t.BookingDate.Month })
@@ -69,13 +83,14 @@ namespace Plutus.Infrastructure.Business.Categories
 
             return ammountCreditedPerMonthItems;
         }
+
         public class CategoriesListItem
         {
             public string Id { get; set; }
             public string Name { get; set; }
             public decimal AmmountCreditedThisMonth { get; set; }
             public decimal TotalAmmountCredited { get; set; }
-            public DateTime LatestTransaction { get; set; }
+            public DateTime? LatestTransaction { get; set; }
         }
 
         public class CategoryCreditedPerMonthItem

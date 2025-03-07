@@ -19,6 +19,7 @@ public class InsertSampleData(AppDbContext dbContext, GCInsertData insertDataSer
             await dbContext.BalanceAudits.AddAsync(new RevolutBalanceAudit
             {
                 Id = Guid.NewGuid().ToString(),
+                UserId = "b6ca41ec-c3d0-44be-aa13-4322d370f625",
                 Amount = balance,
                 RecordedAt = DateTime.UtcNow.AddDays(-i)
             });
@@ -45,7 +46,7 @@ public class InsertSampleData(AppDbContext dbContext, GCInsertData insertDataSer
 
         var transactions = JsonConvert.DeserializeObject<GoCardlessTransactionsReponse>(jsonData);
 
-        await insertDataService.InsertData(transactions);
+        await insertDataService.InsertData(transactions, "b6ca41ec-c3d0-44be-aa13-4322d370f625");
     }
 
     private async Task AssignRandomCategoriesToTransactions()

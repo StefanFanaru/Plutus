@@ -1,5 +1,7 @@
 #/bin/zsh
 
+apiProject="Plutus.API"
+infraProject="Plutus.Infrastructure"
 command=$1
 
 if [ -z "$command" ]; then
@@ -19,12 +21,12 @@ if [ "$command" == "add" ]; then
         exit 1
     fi
     echo "Adding migration..."
-    dotnet ef migrations add "$migraitonName" --project ../Plutus.Infrastructure
+    (cd $apiProject && dotnet ef migrations add "$migraitonName" --project ../$infraProject)
     exit 0
 fi
 
 if [ "$command" == "remove" ]; then
     echo "Removing migration..."
-    dotnet ef migrations remove --project ../Plutus.Infrastructure
+    (cd $apiProject && dotnet ef migrations remove --project ../$infraProject)
     exit 0
 fi
