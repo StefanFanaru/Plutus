@@ -1,5 +1,5 @@
 #nullable enable
-namespace Plutus.Infrastructure.Data.Entities;
+namespace Plutus.Infrastructure.Enums;
 
 public enum TransactionType
 {

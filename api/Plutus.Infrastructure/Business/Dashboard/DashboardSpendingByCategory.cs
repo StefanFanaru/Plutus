@@ -1,9 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Data.Entities;
-using Plutus.Infrastructure.Helpers;
-
 namespace Plutus.Infrastructure.Business.Dashboard;
 
 public class DashboardSpendingByCategory(IUserInfo userInfo, AppDbContext dbContext)

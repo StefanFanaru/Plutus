@@ -1,9 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Data.Entities;
 using Plutus.Infrastructure.Business;
-using Plutus.Infrastructure.Helpers;
-using Plutus.Infrastructure.Abstractions;
 
 namespace Plutus.Infrastructure.Business.Transactions
 {

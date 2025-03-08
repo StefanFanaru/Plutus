@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Data.Entities;
-
 namespace Plutus.Infrastructure.Data;
 
 public class DataMigrator(AppDbContext context, IEnumerable<IDataMigration> dataMigrations)

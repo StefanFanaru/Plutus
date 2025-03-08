@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Plutus.Infrastructure.Business.Dashboard;
 
 namespace Plutus.API.Controllers

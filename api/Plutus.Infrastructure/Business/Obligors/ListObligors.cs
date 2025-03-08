@@ -1,9 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Helpers;
-using Plutus.Infrastructure.Dtos;
-
 namespace Plutus.Infrastructure.Business.Obligors
 {
     public class ListObligors(IUserInfo userInfo, AppDbContext context)

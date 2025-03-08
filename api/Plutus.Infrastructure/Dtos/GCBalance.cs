@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Plutus.Infrastructure.Dtos
 {
     public class GCBalance

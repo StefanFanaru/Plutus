@@ -1,6 +1,4 @@
 using System.Linq.Expressions;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Enums;
 using static Plutus.Infrastructure.Dtos.ListRequest;
 
 namespace Plutus.Infrastructure.Helpers;

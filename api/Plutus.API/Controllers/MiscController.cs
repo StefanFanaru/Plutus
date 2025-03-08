@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Services;
 
 namespace Plutus.API.Controllers
 {

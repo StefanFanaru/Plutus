@@ -1,10 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Helpers;
-using Plutus.Infrastructure.Dtos;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Data.Entities;
-
 namespace Plutus.Infrastructure.Business.Categories
 {
     public class ListCategories(IUserInfo userInfo, AppDbContext context)

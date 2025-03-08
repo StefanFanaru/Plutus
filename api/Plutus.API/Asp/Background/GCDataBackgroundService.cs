@@ -1,7 +1,6 @@
 using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Services;
 
-namespace Plutus.API.Services;
+namespace Plutus.API.Asp.Background;
 
 public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IServiceScopeFactory serviceScopeFactory) : IHostedService, IDisposable
 {

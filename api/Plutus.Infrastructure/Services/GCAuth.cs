@@ -2,9 +2,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-
-using Plutus.Infrastructure.Dtos;
 
 
 namespace Plutus.Infrastructure.Services;

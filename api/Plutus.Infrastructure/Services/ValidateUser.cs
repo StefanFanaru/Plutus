@@ -1,8 +1,3 @@
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Data.Entities;
-
-
 namespace Plutus.Infrastructure.Services;
 
 public class ValidateUser(IUserInfo userInfo, AppDbContext dbContext)

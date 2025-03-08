@@ -1,8 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Data.Entities;
-using Plutus.Infrastructure.Enums;
 
 namespace Plutus.Infrastructure.Services;
 

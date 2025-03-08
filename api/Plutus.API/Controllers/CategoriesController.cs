@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Plutus.Infrastructure.Business.Categories;
 using Plutus.Infrastructure.Dtos;
 

@@ -1,6 +1,3 @@
-using Plutus.Infrastructure.Common;
-using Plutus.Infrastructure.Data.Entities;
-
 using Z.EntityFramework.Plus;
 
 

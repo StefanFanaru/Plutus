@@ -1,7 +1,4 @@
-using Plutus.Infrastructure.Data;
 using static Plutus.Infrastructure.Services.GCGetData;
-using Newtonsoft.Json;
-using Plutus.Infrastructure.Data.Entities;
 
 namespace Plutus.Infrastructure.Services;
 

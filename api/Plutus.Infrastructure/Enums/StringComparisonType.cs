@@ -1,7 +1,3 @@
-using Newtonsoft.Json;
-using Plutus.Infrastructure.Common;
-
-
 namespace Plutus.Infrastructure.Enums;
 
 [JsonConverter(typeof(ListFilterTypeConverter))]

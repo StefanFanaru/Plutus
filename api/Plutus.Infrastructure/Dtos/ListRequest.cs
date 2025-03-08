@@ -1,8 +1,6 @@
 using System.ComponentModel;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Plutus.Infrastructure.Business;
-using Plutus.Infrastructure.Enums;
 
 namespace Plutus.Infrastructure.Dtos;
 

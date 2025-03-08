@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Plutus.Infrastructure.Data.Entities;
-using Plutus.Infrastructure.Common;
-
 namespace Plutus.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)

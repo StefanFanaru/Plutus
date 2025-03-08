@@ -1,6 +1,7 @@
 ﻿using Plutus.Infrastructure.Business.Dashboard;
 using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Data.Entities;
+using Plutus.Infrastructure.Enums;
 using Plutus.UnitTests.TestDtos;
 
 namespace Plutus.UnitTests;

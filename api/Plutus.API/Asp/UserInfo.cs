@@ -1,7 +1,6 @@
 
 using System.Security.Claims;
 using Newtonsoft.Json;
-using Plutus.Infrastructure.Abstractions;
 
 namespace Plutus.API.Asp;
 public class UserInfo : IUserInfo

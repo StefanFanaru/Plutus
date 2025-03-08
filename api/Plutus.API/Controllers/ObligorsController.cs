@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Plutus.Infrastructure.Business.Obligors;
 using Plutus.Infrastructure.Dtos;
 

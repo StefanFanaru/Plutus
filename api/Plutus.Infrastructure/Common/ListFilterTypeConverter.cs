@@ -1,6 +1,3 @@
-using Newtonsoft.Json;
-using Plutus.Infrastructure.Enums;
-
 namespace Plutus.Infrastructure.Common;
 
 public class ListFilterTypeConverter : JsonConverter<StringComparisonType>

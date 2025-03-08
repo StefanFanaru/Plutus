@@ -1,5 +1,3 @@
-using Plutus.Infrastructure.Abstractions;
-
 namespace Plutus.API.Asp
 {
     public class DateFilterInfo : IDateFilterInfo

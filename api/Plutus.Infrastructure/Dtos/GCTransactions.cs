@@ -1,6 +1,6 @@
 // Root myDeserializedclass GC= JsonConvert.DeserializeObject<Root>(myJsonResponse);
-using Newtonsoft.Json;
-using Plutus.Infrastructure.Data.Entities;
+
+namespace Plutus.Infrastructure.Dtos;
 
 public class GCBooked
 {

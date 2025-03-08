@@ -1,9 +1,3 @@
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Data.Entities;
-using Plutus.Infrastructure.Helpers;
-using Microsoft.EntityFrameworkCore;
-
 namespace Plutus.Infrastructure.Business.Dashboard;
 
 public class DashboardSpendingThisWeek(IUserInfo userInfo, AppDbContext dbContext)

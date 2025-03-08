@@ -1,6 +1,6 @@
-using Plutus.API.Services;
 using Serilog;
 using Plutus.API;
+using Plutus.API.Asp.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 

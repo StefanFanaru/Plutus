@@ -1,8 +1,3 @@
-using Plutus.Infrastructure.Data;
-using Plutus.Infrastructure.Data.Entities;
-using Plutus.Infrastructure.Abstractions;
-using Plutus.Infrastructure.Helpers;
-
 namespace Plutus.Infrastructure.Business.Obligors
 {
     public class ChangeObligorFixedExpense(IUserInfo userInfo, AppDbContext context)

@@ -1,6 +1,5 @@
 #nullable enable
 using System.ComponentModel.DataAnnotations;
-using Plutus.Infrastructure.Enums;
 
 namespace Plutus.Infrastructure.Data.Entities;
 

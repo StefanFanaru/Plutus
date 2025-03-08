@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Plutus.Infrastructure.Dtos;
 
 namespace Plutus.Infrastructure.Services
 {

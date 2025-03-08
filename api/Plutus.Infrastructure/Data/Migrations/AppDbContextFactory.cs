@@ -1,8 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Plutus.Infrastructure.Data;
-
-namespace Plutus.Infrastructure.Date.Migrations;
+namespace Plutus.Infrastructure.Data.Migrations;
 
 // public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 // {
