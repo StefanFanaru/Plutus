@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Plutus.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Plutus.Infrastructure.Data;
 namespace Plutus.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308194448_UserStatusMigration")]
+    partial class UserStatusMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,34 +137,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Obligors", "plutus");
-                });
-
-            modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.Requisition", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GoCardlessRequisitionId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Requisitions", "plutus");
                 });
 
             modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.RevolutBalanceAudit", b =>
@@ -297,17 +272,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.Obligor", b =>
-                {
-                    b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Plutus.Infrastructure.Data.Entities.Requisition", b =>
                 {
                     b.HasOne("Plutus.Infrastructure.Data.Entities.User", "User")
                         .WithMany()

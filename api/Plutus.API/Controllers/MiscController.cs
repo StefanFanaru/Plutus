@@ -22,11 +22,11 @@ public class MiscController(IServiceProvider serviceProvider) : ControllerBase
         return Ok(new { Status = "Healthy" });
     }
 
-    [HttpGet("validate-user")]
+    [HttpGet("app-user")]
     public async Task<IActionResult> AuthenticatedStatus()
     {
-        var isValid = await serviceProvider.GetRequiredService<ValidateUser>().IsValidUser();
-        return Ok(new { Status = "Valid" });
+        var user = await serviceProvider.GetRequiredService<GetUserService>().GetAsync();
+        return Ok(user);
     }
 
     [HttpGet("user-info")]

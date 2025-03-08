@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RevolutBalanceAudit> BalanceAudits { get; set; }
     public DbSet<GoCardlessRequest> GoCardlessRequests { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Requisition> Requisitions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

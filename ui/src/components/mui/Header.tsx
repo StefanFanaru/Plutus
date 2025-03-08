@@ -1,12 +1,12 @@
 import Stack from "@mui/material/Stack";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import MenuButton from "./MenuButton";
 import ColorModeIconDropdown from "./ColorModeIconDropdown";
-import { Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import CustomDateRangePicker from "../custom/range-picker/CustomDateRangePicker";
 import NavMenuItems from "./NavMenuItems";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 export default function Header() {
   const location = useLocation();
@@ -40,9 +40,15 @@ export default function Header() {
         {/* <CustomDatePicker /> */}
         {/* <DatePickerButton /> */}
         <CustomDateRangePicker />
-        <MenuButton showBadge aria-label="Open notifications">
-          <NotificationsRoundedIcon />
-        </MenuButton>
+        <Link
+          underline="none"
+          href="https://github.com/StefanFanaru/Plutus"
+          target="_blank"
+        >
+          <MenuButton aria-label="Open notifications">
+            <GitHubIcon />
+          </MenuButton>
+        </Link>
         <ColorModeIconDropdown />
       </Stack>
     </Stack>

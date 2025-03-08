@@ -47,7 +47,9 @@ public static class AppConfiguration
         services.AddScoped<IDateFilterInfo, DateFilterInfo>();
         services.AddScoped<IUserInfo, UserInfo>();
         services.AddScoped<DashboardSpendingByObligor>();
-        services.AddScoped<ValidateUser>();
+        services.AddScoped<GetUserService>();
+        services.AddScoped<GetRequisitionUrlService>();
+        services.AddScoped<ConfirmRequisitionService>();
     }
 
     public static void AddAuth(this IServiceCollection services)

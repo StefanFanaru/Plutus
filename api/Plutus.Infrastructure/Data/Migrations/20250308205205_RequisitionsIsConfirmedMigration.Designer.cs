@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Plutus.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Plutus.Infrastructure.Data;
 namespace Plutus.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308205205_RequisitionsIsConfirmedMigration")]
+    partial class RequisitionsIsConfirmedMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,11 +147,6 @@ namespace Plutus.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("GoCardlessRequisitionId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
 
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");

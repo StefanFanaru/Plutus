@@ -27,6 +27,11 @@ import "./App.css";
 import axiosClient from "./axiosClient";
 import ServiceOffline from "./components/custom/ServerOffline";
 import Forbidden from "./components/custom/Forbidden";
+import { AppUser, UserStatus } from "./common/dtos/User";
+import { useNavigate } from "react-router";
+import Setup from "./pages/Setup/Setup";
+import Globals from "./common/globals";
+import RequistionConfirmed from "./pages/Setup/RequistionConfirmed";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -37,6 +42,7 @@ const xThemeComponents = {
 
 function App() {
   const auth = useAuth();
+  const navigate = useNavigate();
   const [hasTriedSignin, setHasTriedSignin] = useState(false);
   const [isServerOnline, setIsServerOnline] = useState(false);
   const [isServerOnlineLoading, setIsServerOnlineLoading] = useState(true);
@@ -63,7 +69,7 @@ function App() {
   function checkServerStatus() {
     setIsServerOnlineLoading(true);
     axiosClient
-      .get("/api/misc/validate-user", {
+      .get<AppUser>("/api/misc/app-user", {
         timeout: 1000,
       })
       .then((response) => {
@@ -71,6 +77,11 @@ function App() {
           setIsServerOnline(true);
           setIsServerOnlineLoading(false);
           setIsForbidden(false);
+
+          Globals.appUser = response.data;
+          if (response.data.status === UserStatus.New) {
+            navigate("/setup");
+          }
         }
       })
       .catch((error) => {
@@ -136,6 +147,11 @@ function App() {
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="categories" element={<Categories />} />
                     <Route path="analytics" element={<Analytics />} />
+                    <Route path="setup" element={<Setup />} />
+                    <Route
+                      path="requisition-confirmed"
+                      element={<RequistionConfirmed />}
+                    />
                   </Routes>
                 )
               ) : (

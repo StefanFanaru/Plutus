@@ -17,4 +17,6 @@ public class User
     public required string Email { get; set; }
     [MaxLength(100)]
     public required string UserName { get; set; }
+    [Required]
+    public required UserStatus Status { get; set; }
 }

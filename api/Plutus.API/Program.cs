@@ -41,7 +41,6 @@ if (app.Environment.IsDevelopment())
 app.AddCors(builder.Configuration);
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
 app.MapControllers();
 
 Console.WriteLine("API starting");

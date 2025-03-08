@@ -22,7 +22,6 @@ public class GCAuth(IHttpClientFactory httpClientFactory, IMemoryCache cache, IC
             AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(86000)
         });
 
-
         return tokens.Access;
     }
 

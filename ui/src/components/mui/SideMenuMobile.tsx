@@ -6,10 +6,11 @@ import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 import { useAuth } from "react-oidc-context";
 import MenuContent from "./MenuContent";
 import MenuButton from "./MenuButton";
+import { Link } from "@mui/material";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 interface SideMenuMobileProps {
   open: boolean | undefined;
@@ -60,9 +61,15 @@ export default function SideMenuMobile({
               {auth.user?.profile.name}
             </Typography>
           </Stack>
-          <MenuButton showBadge>
-            <NotificationsRoundedIcon />
-          </MenuButton>
+          <Link
+            underline="none"
+            href="https://github.com/StefanFanaru/Plutus"
+            target="_blank"
+          >
+            <MenuButton aria-label="Open notifications">
+              <GitHubIcon />
+            </MenuButton>
+          </Link>
         </Stack>
         <Divider />
         <Stack sx={{ flexGrow: 1 }}>
