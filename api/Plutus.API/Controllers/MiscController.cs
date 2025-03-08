@@ -7,12 +7,13 @@ namespace Plutus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MiscController(IServiceProvider serviceProvider, IUserInfo userInfo) : ControllerBase
+    public class MiscController(IServiceProvider serviceProvider) : ControllerBase
     {
 
         [HttpGet("get-data")]
         public async Task<IActionResult> Get()
         {
+            var userInfo = serviceProvider.GetRequiredService<IUserInfo>();
             await serviceProvider.GetRequiredService<GCDataCollection>().CollectData(userInfo.Id);
             return Ok();
         }
@@ -34,6 +35,7 @@ namespace Plutus.API.Controllers
         [HttpGet("user-info")]
         public IActionResult GetUserinfo()
         {
+            var userInfo = serviceProvider.GetRequiredService<IUserInfo>();
             return Ok(userInfo);
         }
     }
