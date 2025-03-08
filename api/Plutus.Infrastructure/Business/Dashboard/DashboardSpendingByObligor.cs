@@ -19,7 +19,7 @@ public class DashboardSpendingByObligor(IUserInfo userInfo, AppDbContext dbConte
         var totalSpent = transactions.Sum(x => x.Amount);
         var response = new Response
         {
-            Items = [],
+            Items = []
         };
 
         foreach (var obligor in obligors)

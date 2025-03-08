@@ -4,4 +4,3 @@ public interface IDataMigration
 {
     Task MigrateAsync();
 }
-

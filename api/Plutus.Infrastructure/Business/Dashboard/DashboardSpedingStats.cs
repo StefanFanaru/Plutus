@@ -64,7 +64,7 @@ public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
                 Amount = x.Amount,
                 BookingDate = x.BookingDate
             })
-        .SumAsync(x => x.Amount);
+            .SumAsync(x => x.Amount);
     }
     public static decimal GetMedian(List<decimal> numbers)
     {
@@ -74,7 +74,7 @@ public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
         }
 
         var sortedNumbers = numbers.OrderBy(n => n).ToList();
-        int count = sortedNumbers.Count;
+        var count = sortedNumbers.Count;
         decimal median;
 
         if (count % 2 == 0)
@@ -94,7 +94,7 @@ public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
         var median = GetMedian(inputValues);
 
         var projection = new List<Response.SpentPerDay>();
-        for (int i = 1; i <= 5; i++)
+        for (var i = 1; i <= 5; i++)
         {
             projection.Add(new Response.SpentPerDay
             {

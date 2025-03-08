@@ -1,4 +1,3 @@
-using Serilog;
 using Plutus.API;
 using Plutus.API.Asp.Background;
 
@@ -47,4 +46,4 @@ app.MapControllers();
 
 Console.WriteLine("API starting");
 
-app.Run();
+await app.RunAsync();

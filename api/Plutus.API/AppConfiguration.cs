@@ -6,15 +6,15 @@ using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Plutus.API.Asp;
 using Plutus.Infrastructure.Business.Categories;
 using Plutus.Infrastructure.Business.Dashboard;
 using Plutus.Infrastructure.Business.Obligors;
 using Plutus.Infrastructure.Business.Transactions;
-using Plutus.Infrastructure.Data;
 using Plutus.Infrastructure.Common;
-using Plutus.API.Asp;
+using Plutus.Infrastructure.Data;
 using Serilog;
-using Plutus.API;
+using Serilog.Events;
 
 namespace Plutus.API;
 
@@ -53,30 +53,30 @@ public static class AppConfiguration
     public static void AddAuth(this IServiceCollection services)
     {
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.Authority = "https://auth.stefanaru.com";
-            options.Audience = "account";
-            options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidIssuer = "https://auth.stefanaru.com/realms/stefanaru",
-                ValidAudience = "account"
-            };
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = "https://auth.stefanaru.com";
+                options.Audience = "account";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = "https://auth.stefanaru.com/realms/stefanaru",
+                    ValidAudience = "account"
+                };
 
-            options.ConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-            $"{options.TokenValidationParameters.ValidIssuer}/.well-known/openid-configuration",
-            new OpenIdConnectConfigurationRetriever());
-        });
+                options.ConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                    $"{options.TokenValidationParameters.ValidIssuer}/.well-known/openid-configuration",
+                    new OpenIdConnectConfigurationRetriever());
+            });
 
         services.AddAuthorizationBuilder()
             .AddPolicy("PlutusUserPolicy", policy =>
-                    policy.Requirements.Add(new PlutusUserRequirement()))
+                policy.Requirements.Add(new PlutusUserRequirement()))
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .AddRequirements(new PlutusUserRequirement())
@@ -108,8 +108,8 @@ public static class AppConfiguration
         {
             options.IncludeQueryInRequestPath = true;
             options.GetLevel = (httpContext, elapsed, ex) => ex != null || httpContext.Response.StatusCode >= 400
-                ? Serilog.Events.LogEventLevel.Error
-                : Serilog.Events.LogEventLevel.Information;
+                ? LogEventLevel.Error
+                : LogEventLevel.Information;
         });
     }
 
@@ -174,5 +174,4 @@ public static class AppConfiguration
             services.AddSwaggerServices();
         }
     }
-
 }

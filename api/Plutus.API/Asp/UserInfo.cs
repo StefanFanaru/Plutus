@@ -1,8 +1,7 @@
-
 using System.Security.Claims;
-using Newtonsoft.Json;
 
 namespace Plutus.API.Asp;
+
 public class UserInfo : IUserInfo
 {
     public UserInfo(IHttpContextAccessor httpContextAccessor)

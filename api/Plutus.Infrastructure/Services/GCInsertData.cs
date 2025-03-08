@@ -1,5 +1,5 @@
-using static Plutus.Infrastructure.Services.GCGetData;
 using System.Globalization;
+using static Plutus.Infrastructure.Services.GCGetData;
 
 namespace Plutus.Infrastructure.Services;
 
@@ -7,7 +7,7 @@ public class GCInsertData(AppDbContext dbContext)
 {
     public async Task InsertData(GoCardlessTransactionsReponse transactions, string userId)
     {
-        var ignoredTransactions = new string[] { "TOPUP", "EXCHANGE", "FEE" };
+        var ignoredTransactions = new[] { "TOPUP", "EXCHANGE", "FEE" };
         var bookedTransactions = transactions.Transactions.Booked
             .Where(x => !ignoredTransactions.Contains(x.ProprietaryBankTransactionCode))
             .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || !string.IsNullOrEmpty(x.DebtorName))
@@ -17,7 +17,7 @@ public class GCInsertData(AppDbContext dbContext)
             .Where(x => !string.IsNullOrEmpty(x.CreditorName) || !string.IsNullOrEmpty(x.DebtorName));
 
         await InsertObligors(bookedTransactions, userId);
-        var obligors = dbContext.Obligors.ToList();
+        var obligors = await dbContext.Obligors.ToListAsync();
 
         var transactionBookedEntitties = bookedTransactions.Select(t => new Transaction
         {
@@ -27,13 +27,13 @@ public class GCInsertData(AppDbContext dbContext)
             Amount = t.TransactionAmount.Amount,
             BookingDate = t.BookingDateTime,
             ObligorId = t.CreditorName != null ?
-            obligors.Single(obligor => string.Equals(t.CreditorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id :
-            obligors.Single(obligor => string.Equals(t.DebtorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id,
+                obligors.Single(obligor => string.Equals(t.CreditorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id :
+                obligors.Single(obligor => string.Equals(t.DebtorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id,
             CategoryId = AppConstants.UncategorizedCategoryId,
-            IsCredit = t.CreditorName != null,
+            IsCredit = t.CreditorName != null
         });
 
-        var dbTransactions = dbContext.Transactions.ToList();
+        var dbTransactions = await dbContext.Transactions.ToListAsync();
         var filteredTransactions = new List<Transaction>();
 
         foreach (var transaction in transactionBookedEntitties)
@@ -51,11 +51,7 @@ public class GCInsertData(AppDbContext dbContext)
 
     private static string RemoveNamePrefix(string name)
     {
-
-        // return name;
-        var removablePrefixes = new string[] { "Payu", "Ep", "Bkg" };
-
-        // if the name starts with a removable prefix, remove it
+        var removablePrefixes = new[] { "Payu", "Ep", "Bkg" };
         foreach (var prefix in removablePrefixes)
         {
             if (name.StartsWith(prefix) || name.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase))
@@ -73,17 +69,6 @@ public class GCInsertData(AppDbContext dbContext)
         var fixedExpensesObligorsJson = await File.ReadAllTextAsync(fixedExpensesObligorsPath);
         var fixedExpensesObligors = JsonConvert.DeserializeObject<List<string>>(fixedExpensesObligorsJson);
 
-        static string FormatName(string name)
-        {
-            // if the name is full uppercase, convert it to title case
-            if (name == name.ToUpper())
-            {
-                return RemoveNamePrefix(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()));
-            }
-
-            return RemoveNamePrefix(name);
-        }
-
         var obligors = bookedTransactions
             .Select(t => t.CreditorName)
             .Union(bookedTransactions.Select(t => t.DebtorName))
@@ -97,7 +82,7 @@ public class GCInsertData(AppDbContext dbContext)
                 IsForFixedExpenses = fixedExpensesObligors.Contains(x)
             });
 
-        var dbObligors = dbContext.Obligors.ToList();
+        var dbObligors = await dbContext.Obligors.ToListAsync();
 
         var filteredObligors = new List<Obligor>();
 
@@ -118,5 +103,17 @@ public class GCInsertData(AppDbContext dbContext)
 
         await dbContext.AddRangeAsync(filteredObligors);
         await dbContext.SaveChangesAsync();
+        return;
+
+        static string FormatName(string name)
+        {
+            // if the name is full uppercase, convert it to title case
+            if (name == name.ToUpper())
+            {
+                return RemoveNamePrefix(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()));
+            }
+
+            return RemoveNamePrefix(name);
+        }
     }
 }

@@ -1,29 +1,28 @@
-namespace Plutus.Infrastructure.Dtos
+namespace Plutus.Infrastructure.Dtos;
+
+public class GCBalance
 {
-    public class GCBalance
-    {
-        [JsonProperty("balances")]
-        public List<Balance> Balances { get; set; }
-    }
+    [JsonProperty("balances")]
+    public List<Balance> Balances { get; set; }
+}
 
-    public class Balance
-    {
-        [JsonProperty("balanceAmount")]
-        public BalanceAmount BalanceAmount { get; set; }
+public class Balance
+{
+    [JsonProperty("balanceAmount")]
+    public BalanceAmount BalanceAmount { get; set; }
 
-        [JsonProperty("balanceType")]
-        public string BalanceType { get; set; }
+    [JsonProperty("balanceType")]
+    public string BalanceType { get; set; }
 
-        [JsonProperty("referenceDate")]
-        public string ReferenceDate { get; set; }
-    }
+    [JsonProperty("referenceDate")]
+    public string ReferenceDate { get; set; }
+}
 
-    public class BalanceAmount
-    {
-        [JsonProperty("amount")]
-        public string Amount { get; set; }
+public class BalanceAmount
+{
+    [JsonProperty("amount")]
+    public string Amount { get; set; }
 
-        [JsonProperty("currency")]
-        public string Currency { get; set; }
-    }
+    [JsonProperty("currency")]
+    public string Currency { get; set; }
 }

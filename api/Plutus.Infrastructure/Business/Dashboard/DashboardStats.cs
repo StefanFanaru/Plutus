@@ -51,7 +51,7 @@ public class DashboardStats(IUserInfo userInfo, AppDbContext dbContext)
             .Select(g => new
             {
                 Date = g.Key,
-                Amount = g.OrderByDescending(x => x.RecordedAt).FirstOrDefault().Amount // Get the last record's amount
+                g.OrderByDescending(x => x.RecordedAt).FirstOrDefault().Amount // Get the last record's amount
             })
             .OrderBy(x => x.Date)
             .ToListAsync();
@@ -89,7 +89,6 @@ public class DashboardStats(IUserInfo userInfo, AppDbContext dbContext)
     {
         public BalanceDetails BalanceDetails { get; set; }
         public LastTransaction LastTransaction { get; set; }
-
     }
 
     public class LastTransaction

@@ -1,5 +1,3 @@
-// Root myDeserializedclass GC= JsonConvert.DeserializeObject<Root>(myJsonResponse);
-
 namespace Plutus.Infrastructure.Dtos;
 
 public class GCBooked
@@ -37,7 +35,7 @@ public class GCBooked
             "CARD_PAYMENT" => TransactionType.CardPayment,
             "CARD_REFUND" => TransactionType.CardRefund,
             "REV_PAYMENT" => TransactionType.RevolutPayment,
-            _ => throw new Exception($"Unknown transaction type {ProprietaryBankTransactionCode}"),
+            _ => throw new Exception($"Unknown transaction type {ProprietaryBankTransactionCode}")
         };
     }
 }

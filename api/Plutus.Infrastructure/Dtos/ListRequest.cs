@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Newtonsoft.Json.Converters;
-using Plutus.Infrastructure.Business;
 
 namespace Plutus.Infrastructure.Dtos;
 
@@ -26,4 +25,3 @@ public class ListRequest
         public string Value { get; set; }
     }
 }
-

@@ -16,4 +16,3 @@ public class Obligor
     public required string DisplayName { get; set; }
     public bool IsForFixedExpenses { get; set; }
 }
-

@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
-
 namespace Plutus.Infrastructure.Services;
 
 public class GCAuth(IHttpClientFactory httpClientFactory, IMemoryCache cache, IConfiguration configuration)

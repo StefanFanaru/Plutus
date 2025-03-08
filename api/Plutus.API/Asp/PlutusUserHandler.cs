@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Plutus.API.Asp;
+
 public class PlutusUserHandler(IConfiguration configuration) : AuthorizationHandler<PlutusUserRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PlutusUserRequirement requirement)
@@ -10,8 +12,8 @@ public class PlutusUserHandler(IConfiguration configuration) : AuthorizationHand
         if (resourceAccess != null)
         {
             var clientId = configuration["AuthClientId"];
-            var resourceAccessJson = System.Text.Json.JsonDocument.Parse(resourceAccess);
-            if (!resourceAccessJson.RootElement.TryGetProperty(clientId, out var client))
+            var resourceAccessJson = JsonDocument.Parse(resourceAccess);
+            if (!resourceAccessJson.RootElement.TryGetProperty(clientId, out var _))
             {
                 return Task.CompletedTask;
             }
@@ -32,10 +34,6 @@ public class PlutusUserHandler(IConfiguration configuration) : AuthorizationHand
     }
 }
 
-
 public class PlutusUserRequirement : IAuthorizationRequirement
 {
-    public PlutusUserRequirement() { }
 }
-
-

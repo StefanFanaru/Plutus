@@ -1,6 +1,3 @@
-using Z.EntityFramework.Plus;
-
-
 namespace Plutus.Infrastructure.Data.DataMigrations;
 
 public class FixedCategoryDataMigration(AppDbContext appDbContext) : IDataMigration

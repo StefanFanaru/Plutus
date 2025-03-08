@@ -114,7 +114,7 @@ public static class QueriableExtensions
             case StringComparisonType.DoesNotContain:
                 comparisonExpression = Expression.Not(Expression.Call(property, nameof(string.Contains), null, value));
                 break;
-                // Add other cases as needed
+            // Add other cases as needed
         }
 
         if (comparisonExpression != null)
@@ -129,7 +129,6 @@ public static class QueriableExtensions
     public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int pageNumber, int pageSize)
     {
         return query.Skip(pageNumber * pageSize)
-        .Take(pageSize);
+            .Take(pageSize);
     }
-
 }

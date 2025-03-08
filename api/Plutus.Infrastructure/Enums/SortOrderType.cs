@@ -5,5 +5,3 @@ public enum SortOrderType
     Asc,
     Desc
 }
-
-

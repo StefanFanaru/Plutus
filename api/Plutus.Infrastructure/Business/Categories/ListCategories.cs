@@ -1,101 +1,100 @@
-namespace Plutus.Infrastructure.Business.Categories
+namespace Plutus.Infrastructure.Business.Categories;
+
+public class ListCategories(IUserInfo userInfo, AppDbContext context)
 {
-    public class ListCategories(IUserInfo userInfo, AppDbContext context)
+    public async Task<List<CategoryDto>> GetAll()
     {
-        public async Task<List<CategoryDto>> GetAll()
-        {
-            return await context.Categories.AsQueryable()
-                .Select(category => new CategoryDto
-                {
-                    Id = category.Id,
-                    Name = category.Name,
-                }).ToListAsync();
-
-        }
-        public async Task<ListResponse<CategoriesListItem>> Get(ListRequest request)
-        {
-            var query = context.Categories.AsQueryable();
-            var mappedQuery = query
-                .Select(category => new CategoriesListItem
-                {
-                    Id = category.Id,
-                    Name = category.Name,
-                    AmmountCreditedThisMonth = context.Transactions
-                        .ApplyUserFilter(userInfo.Id)
-                        .Where(t => t.CategoryId == category.Id && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30))
-                        .Sum(t => t.Amount),
-                    TotalAmmountCredited = context.Transactions
-                        .ApplyUserFilter(userInfo.Id)
-                        .Where(t => t.CategoryId == category.Id && t.IsCredit)
-                        .Sum(t => t.Amount),
-                    LatestTransaction = context.Transactions
-                        .Where(t => t.UserId == userInfo.Id)
-                        .Where(t => t.CategoryId == category.Id)
-                        .OrderByDescending(t => t.BookingDate)
-                        .Select(t => (DateTime?)t.BookingDate)
-                        .FirstOrDefault(),
-                })
-                .ApplySorting(request.SortField, request.SortOrder)
-                .ApplyFilter(request.Filter)
-                .ApplyPaging(request.PageNumber, request.PageSize);
-
-            return new ListResponse<CategoriesListItem>
+        return await context.Categories.AsQueryable()
+            .Select(category => new CategoryDto
             {
-                Items = await mappedQuery.ToListAsync(),
-                TotalCount = await context.Categories.CountAsync()
-            };
+                Id = category.Id,
+                Name = category.Name
+            }).ToListAsync();
 
-        }
-
-        public async Task<List<CategoryCreditedPerMonthItem>> GetAmmountCreditedPerMonth(List<string> ids)
-        {
-            var ammountCreditedPerMonth = await context.Transactions
-                .ApplyUserFilter(userInfo.Id)
-                .Where(t => ids.Contains(t.CategoryId))
-                .Where(t => t.BookingDate >= DateTime.UtcNow.AddMonths(-11))
-                .GroupBy(t => new { t.CategoryId, t.BookingDate.Year, t.BookingDate.Month })
-                .Select(g => new { g.Key.CategoryId, g.Key.Month, Sum = g.Sum(t => t.Amount) })
-                .ToListAsync();
-
-            var ammountCreditedPerMonthItems = ammountCreditedPerMonth
-                .GroupBy(t => t.CategoryId)
-                .Select(g => new CategoryCreditedPerMonthItem
-                {
-                    CategoryId = g.Key,
-                    AmmountCreditedPerMonth = g.ToDictionary(t => t.Month, t => t.Sum)
-                }).ToList();
-
-            // fill with 0 for missing months
-            foreach (var item in ammountCreditedPerMonthItems)
+    }
+    public async Task<ListResponse<CategoriesListItem>> Get(ListRequest request)
+    {
+        var query = context.Categories.AsQueryable();
+        var mappedQuery = query
+            .Select(category => new CategoriesListItem
             {
-                for (int i = 1; i <= 12; i++)
-                {
-                    item.AmmountCreditedPerMonth.TryAdd(i, 0);
-                }
+                Id = category.Id,
+                Name = category.Name,
+                AmmountCreditedThisMonth = context.Transactions
+                    .ApplyUserFilter(userInfo.Id)
+                    .Where(t => t.CategoryId == category.Id && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30))
+                    .Sum(t => t.Amount),
+                TotalAmmountCredited = context.Transactions
+                    .ApplyUserFilter(userInfo.Id)
+                    .Where(t => t.CategoryId == category.Id && t.IsCredit)
+                    .Sum(t => t.Amount),
+                LatestTransaction = context.Transactions
+                    .Where(t => t.UserId == userInfo.Id)
+                    .Where(t => t.CategoryId == category.Id)
+                    .OrderByDescending(t => t.BookingDate)
+                    .Select(t => (DateTime?)t.BookingDate)
+                    .FirstOrDefault()
+            })
+            .ApplySorting(request.SortField, request.SortOrder)
+            .ApplyFilter(request.Filter)
+            .ApplyPaging(request.PageNumber, request.PageSize);
+
+        return new ListResponse<CategoriesListItem>
+        {
+            Items = await mappedQuery.ToListAsync(),
+            TotalCount = await context.Categories.CountAsync()
+        };
+
+    }
+
+    public async Task<List<CategoryCreditedPerMonthItem>> GetAmmountCreditedPerMonth(List<string> ids)
+    {
+        var ammountCreditedPerMonth = await context.Transactions
+            .ApplyUserFilter(userInfo.Id)
+            .Where(t => ids.Contains(t.CategoryId))
+            .Where(t => t.BookingDate >= DateTime.UtcNow.AddMonths(-11))
+            .GroupBy(t => new { t.CategoryId, t.BookingDate.Year, t.BookingDate.Month })
+            .Select(g => new { g.Key.CategoryId, g.Key.Month, Sum = g.Sum(t => t.Amount) })
+            .ToListAsync();
+
+        var ammountCreditedPerMonthItems = ammountCreditedPerMonth
+            .GroupBy(t => t.CategoryId)
+            .Select(g => new CategoryCreditedPerMonthItem
+            {
+                CategoryId = g.Key,
+                AmmountCreditedPerMonth = g.ToDictionary(t => t.Month, t => t.Sum)
+            }).ToList();
+
+        // fill with 0 for missing months
+        foreach (var item in ammountCreditedPerMonthItems)
+        {
+            for (var i = 1; i <= 12; i++)
+            {
+                item.AmmountCreditedPerMonth.TryAdd(i, 0);
             }
-
-            return ammountCreditedPerMonthItems;
         }
 
-        public class CategoriesListItem
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public decimal AmmountCreditedThisMonth { get; set; }
-            public decimal TotalAmmountCredited { get; set; }
-            public DateTime? LatestTransaction { get; set; }
-        }
+        return ammountCreditedPerMonthItems;
+    }
 
-        public class CategoryCreditedPerMonthItem
-        {
-            public string CategoryId { get; set; }
-            public Dictionary<int, decimal> AmmountCreditedPerMonth { get; set; }
-        }
+    public class CategoriesListItem
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public decimal AmmountCreditedThisMonth { get; set; }
+        public decimal TotalAmmountCredited { get; set; }
+        public DateTime? LatestTransaction { get; set; }
+    }
 
-        public class CategoryDto
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-        }
+    public class CategoryCreditedPerMonthItem
+    {
+        public string CategoryId { get; set; }
+        public Dictionary<int, decimal> AmmountCreditedPerMonth { get; set; }
+    }
+
+    public class CategoryDto
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

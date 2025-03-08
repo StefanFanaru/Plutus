@@ -41,17 +41,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasIndex(e => e.Name).IsUnique();
             entity.HasData(
-                    new Category
-                    {
-                        Id = AppConstants.UncategorizedCategoryId,
+                new Category
+                {
+                    Id = AppConstants.UncategorizedCategoryId,
 
-                        Name = "Uncategorized",
-                    },
-                    new Category
-                    {
-                        Id = AppConstants.FixedCategoryId,
-                        Name = "Fixed",
-                    }
+                    Name = "Uncategorized"
+                },
+                new Category
+                {
+                    Id = AppConstants.FixedCategoryId,
+                    Name = "Fixed"
+                }
             );
         });
     }

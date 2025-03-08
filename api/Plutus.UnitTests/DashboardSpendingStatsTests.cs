@@ -8,11 +8,11 @@ namespace Plutus.UnitTests;
 
 public class DashboardSpendingStatsTests : IDisposable
 {
-    private AppDbContext _context;
-    private readonly TestUserInfo _userInfo;
-    private readonly string _obligorId = Guid.NewGuid().ToString();
     private readonly string _categoryId = Guid.NewGuid().ToString();
+    private readonly string _obligorId = Guid.NewGuid().ToString();
     private readonly string _userId = Guid.NewGuid().ToString();
+    private readonly TestUserInfo _userInfo;
+    private AppDbContext _context;
 
 
     public DashboardSpendingStatsTests()
@@ -54,7 +54,7 @@ public class DashboardSpendingStatsTests : IDisposable
         var category = new Category
         {
             Id = _categoryId,
-            Name = "Test Category",
+            Name = "Test Category"
         };
 
         _context.Obligors.Add(obligor);
@@ -63,7 +63,7 @@ public class DashboardSpendingStatsTests : IDisposable
 
         var transactions = new List<Transaction>();
 
-        for (int i = 0; i < days; i++)
+        for (var i = 0; i < days; i++)
         {
             var transaction = new Transaction
             {

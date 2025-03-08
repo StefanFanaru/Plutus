@@ -1,53 +1,50 @@
-namespace Plutus.Infrastructure.Business.Transactions
+namespace Plutus.Infrastructure.Business.Transactions;
+
+public class UnsplitTransaction(IUserInfo userInfo, AppDbContext context)
 {
-    public class UnsplitTransaction(IUserInfo userInfo, AppDbContext context)
+    public async Task<bool> Unsplit(string transactionId)
     {
-        public async Task<bool> Unsplit(string transactionId)
+        var originalTransactionId = await context.Transactions
+            .ApplyUserFilter(userInfo.Id)
+            .Where(transaction => transaction.Id == transactionId)
+            .Select(transaction => transaction.OriginalTransactionId)
+            .SingleAsync();
+
+        if (originalTransactionId == null)
         {
-            var originalTransactionId = await context.Transactions
-                .ApplyUserFilter(userInfo.Id)
-                .Where(transaction => transaction.Id == transactionId)
-                .Select(transaction => transaction.OriginalTransactionId)
-                .SingleAsync();
+            return false;
+        }
 
-            if (originalTransactionId == null)
-            {
-                return false;
-            }
-
-            var splits = await context.Transactions
-                .Where(transaction => transaction.OriginalTransactionId != null && transaction.OriginalTransactionId == originalTransactionId)
-                .ToListAsync();
+        var splits = await context.Transactions
+            .Where(transaction => transaction.OriginalTransactionId != null && transaction.OriginalTransactionId == originalTransactionId)
+            .ToListAsync();
 
 
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            context.Transactions.RemoveRange(splits);
+
+            await context.Transactions
+                .Where(transaction => transaction.Id == originalTransactionId)
+                .UpdateFromQueryAsync(transaction => new Transaction
                 {
-                    context.Transactions.RemoveRange(splits);
+                    Id = transaction.Id,
+                    UserId = transaction.UserId,
+                    CategoryId = transaction.CategoryId,
+                    IsExcluded = false,
+                    IsSplit = false
+                });
 
-                    await context.Transactions
-                        .Where(transaction => transaction.Id == originalTransactionId)
-                        .UpdateFromQueryAsync(transaction => new Transaction
-                        {
-                            Id = transaction.Id,
-                            UserId = transaction.UserId,
-                            CategoryId = transaction.CategoryId,
-                            IsExcluded = false,
-                            IsSplit = false
-                        });
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return true;
 
-                    await context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return true;
-
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                    return false;
-                }
-            }
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            return false;
         }
     }
 }

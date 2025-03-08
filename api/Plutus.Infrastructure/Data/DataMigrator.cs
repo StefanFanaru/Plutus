@@ -4,7 +4,7 @@ public class DataMigrator(AppDbContext context, IEnumerable<IDataMigration> data
 {
     public async Task MigrateData()
     {
-        var appMigrations = context.DataMigrations.Select(m => m.Name).ToList();
+        var appMigrations = await context.DataMigrations.Select(m => m.Name).ToListAsync();
 
         foreach (var migration in dataMigrations.Where(m => !appMigrations.Contains(m.GetType().Name)))
         {
@@ -26,4 +26,3 @@ public class DataMigrator(AppDbContext context, IEnumerable<IDataMigration> data
         context.DataMigrations.Add(dataMigration);
     }
 }
-

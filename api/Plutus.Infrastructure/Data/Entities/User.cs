@@ -1,7 +1,6 @@
 #nullable enable
 using System.ComponentModel.DataAnnotations;
 
-
 namespace Plutus.Infrastructure.Data.Entities;
 
 public class User

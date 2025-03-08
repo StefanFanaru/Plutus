@@ -1,4 +1,3 @@
-
 namespace Plutus.Infrastructure.Abstractions;
 
 public interface IUserInfo

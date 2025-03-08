@@ -1,9 +1,7 @@
+namespace Plutus.Infrastructure.Abstractions;
 
-namespace Plutus.Infrastructure.Abstractions
+public interface IDateFilterInfo
 {
-    public interface IDateFilterInfo
-    {
-        DateTime? StartDate { get; set; }
-        DateTime? EndDate { get; set; }
-    }
+    DateTime? StartDate { get; set; }
+    DateTime? EndDate { get; set; }
 }

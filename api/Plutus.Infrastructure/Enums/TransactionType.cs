@@ -1,4 +1,3 @@
-#nullable enable
 namespace Plutus.Infrastructure.Enums;
 
 public enum TransactionType

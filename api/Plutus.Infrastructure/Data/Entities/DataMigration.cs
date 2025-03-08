@@ -13,4 +13,3 @@ public class DataMigration
     public required string Type { get; set; }
     public DateTime InsertTime { get; set; }
 }
-

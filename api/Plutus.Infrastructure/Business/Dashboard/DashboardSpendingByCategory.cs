@@ -23,7 +23,7 @@ public class DashboardSpendingByCategory(IUserInfo userInfo, AppDbContext dbCont
         var totalSpent = transactions.Sum(x => x.Amount);
         var response = new Response
         {
-            Items = [],
+            Items = []
         };
 
         foreach (var category in categories)

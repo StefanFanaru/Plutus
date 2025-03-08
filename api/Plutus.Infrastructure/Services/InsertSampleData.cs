@@ -49,9 +49,9 @@ public class InsertSampleData(AppDbContext dbContext, GCInsertData insertDataSer
     private async Task AssignRandomCategoriesToTransactions()
     {
 
-        System.Console.WriteLine("Assigning random categories to transactions");
-        var categories = dbContext.Categories.ToList();
-        var transactions = dbContext.Transactions.ToList();
+        Console.WriteLine("Assigning random categories to transactions");
+        var categories = await dbContext.Categories.ToListAsync();
+        var transactions = await dbContext.Transactions.ToListAsync();
         var random = new Random();
 
         foreach (var transaction in transactions)
@@ -66,12 +66,12 @@ public class InsertSampleData(AppDbContext dbContext, GCInsertData insertDataSer
 
     public async Task InsertSampleDataAsync()
     {
-        if (!dbContext.Categories.Any(x => x.Name != "Uncategorized"))
+        if (!await dbContext.Categories.AnyAsync(x => x.Name != "Uncategorized"))
         {
             await InsertCategories();
         }
 
-        if (!dbContext.Transactions.Any())
+        if (!await dbContext.Transactions.AnyAsync())
         {
             await InsertTransactions();
 
@@ -81,7 +81,7 @@ public class InsertSampleData(AppDbContext dbContext, GCInsertData insertDataSer
             }
         }
 
-        if (!dbContext.BalanceAudits.Any())
+        if (!await dbContext.BalanceAudits.AnyAsync())
         {
             await InsertBalances();
         }

@@ -7,9 +7,21 @@ public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IS
     private readonly ILogger<GCDataBackgroundService> _logger = logger;
     private Timer _timer;
 
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(15));
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }
 
@@ -42,17 +54,4 @@ public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IS
             }
         }
     }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        _timer?.Change(Timeout.Infinite, 0);
-        return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
-        GC.SuppressFinalize(this);
-    }
 }
-

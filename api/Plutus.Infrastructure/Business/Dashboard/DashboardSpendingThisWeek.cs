@@ -7,14 +7,14 @@ public class DashboardSpendingThisWeek(IUserInfo userInfo, AppDbContext dbContex
         var categories = await dbContext.Categories.ToListAsync();
 
         var transactions = Query(request.StartDate, request.EndDate)
-        .Select(x => new
-        {
-            x.CategoryId,
-            x.Amount,
-            x.BookingDate
-        });
+            .Select(x => new
+            {
+                x.CategoryId,
+                x.Amount,
+                x.BookingDate
+            });
 
-        if (!transactions.Any())
+        if (!await transactions.AnyAsync())
         {
             return new Response();
         }
@@ -25,12 +25,12 @@ public class DashboardSpendingThisWeek(IUserInfo userInfo, AppDbContext dbContex
         foreach (var category in categories)
         {
             var data = new List<decimal>();
-            for (int i = 0; i <= days; i++)
+            for (var i = 0; i <= days; i++)
             {
-                data.Add(transactions
+                data.Add(await transactions
                     .Where(x => x.CategoryId == category.Id)
                     .Where(x => x.BookingDate.Date == DateTime.UtcNow.AddDays(-i).Date)
-                    .Sum(x => x.Amount));
+                    .SumAsync(x => x.Amount));
             }
 
             data.Reverse();
@@ -45,8 +45,8 @@ public class DashboardSpendingThisWeek(IUserInfo userInfo, AppDbContext dbContex
 
         result = [.. result.Where(x => x.Data.Sum() != 0)];
 
-        var spentLastIntevalDays = transactions.Sum(x => x.Amount);
-        var spentLastLastIntevalDays = Query(request.StartDate.AddDays(-days), request.StartDate.Date.AddDays(-1)).Sum(x => x.Amount);
+        var spentLastIntevalDays = await transactions.SumAsync(x => x.Amount);
+        var spentLastLastIntevalDays =await Query(request.StartDate.AddDays(-days), request.StartDate.Date.AddDays(-1)).SumAsync(x => x.Amount);
 
         return new Response
         {

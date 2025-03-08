@@ -4,7 +4,7 @@ public class ValidateUser(IUserInfo userInfo, AppDbContext dbContext)
 {
     public async Task<bool> IsValidUser()
     {
-        var exists = dbContext.Users.Any(user => user.Id == userInfo.Id);
+        var exists = await dbContext.Users.AnyAsync(user => user.Id == userInfo.Id);
         if (!exists)
         {
             dbContext.Users.Add(new User
