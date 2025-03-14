@@ -7,10 +7,10 @@ namespace Plutus.API.Controllers;
 public class DashboardController(IServiceProvider serviceProvider) : ControllerBase
 {
 
-    [HttpGet("stats")]
+    [HttpGet("stats-cards")]
     public async Task<IActionResult> GetStats()
     {
-        return Ok(await serviceProvider.GetRequiredService<DashboardStats>().GetAsync());
+        return Ok(await serviceProvider.GetRequiredService<DashboardStatCards>().GetAsync());
     }
 
     [HttpGet("spending-stats")]

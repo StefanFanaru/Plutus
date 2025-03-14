@@ -40,7 +40,7 @@ export default function Dashboard() {
     useState<DashboardInfoCardProps | null>(null);
   const fetchBudget = async () => {
     const response = await axiosClient.get<DashboardStats>(
-      "/api/Dashboard/stats",
+      "/api/Dashboard/stats-cards",
     );
 
     const balanceDetails = response.data.balanceDetails;

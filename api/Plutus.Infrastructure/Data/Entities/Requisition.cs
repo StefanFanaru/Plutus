@@ -14,4 +14,5 @@ public class Requisition
     public required string UserId { get; set; }
     public required DateTime Created { get; set; }
     public bool IsConfirmed { get; set; }
+    public required string Link { get; set; }
 }

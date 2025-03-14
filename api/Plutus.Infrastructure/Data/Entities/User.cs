@@ -19,4 +19,5 @@ public class User
     public required string UserName { get; set; }
     [Required]
     public required UserStatus Status { get; set; }
+    public string? RevolutAccountId { get; set; }
 }

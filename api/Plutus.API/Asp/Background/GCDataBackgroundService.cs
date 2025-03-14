@@ -1,10 +1,10 @@
 using Plutus.Infrastructure.Data;
+using Serilog;
 
 namespace Plutus.API.Asp.Background;
 
-public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IServiceScopeFactory serviceScopeFactory) : IHostedService, IDisposable
+public class GCDataBackgroundService(IServiceScopeFactory serviceScopeFactory) : IHostedService, IDisposable
 {
-    private readonly ILogger<GCDataBackgroundService> _logger = logger;
     private Timer _timer;
 
     public void Dispose()
@@ -29,11 +29,11 @@ public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IS
     {
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
-            _logger.LogInformation("Development environment, not running GC Data Background Service.");
+            Log.Information("Development environment, not running GC Data Background Service.");
             return;
         }
 
-        _logger.LogInformation("GC Data Background Service is being executed.");
+        Log.Information("GC Data Background Service is being executed.");
 
         using var scope = serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -49,7 +49,6 @@ public class GCDataBackgroundService(ILogger<GCDataBackgroundService> logger, IS
 
             if (lastRequest == null || lastRequest.MadeAt < DateTime.UtcNow.AddHours(-6))
             {
-                _logger.LogInformation("Making a new GoCardless request.");
                 await gCDataCollection.CollectData(user.Id);
             }
         }

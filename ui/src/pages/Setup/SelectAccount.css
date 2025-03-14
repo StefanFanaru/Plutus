@@ -1,0 +1,12 @@
+.selected-account {
+  background-color: hsl(220, 20%, 6%) !important;
+}
+
+*:where([data-mui-color-scheme="light"]) .selected-account {
+  background-color: hsl(220, 20%, 96%) !important;
+}
+
+.MuiAccordionDetails-root {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

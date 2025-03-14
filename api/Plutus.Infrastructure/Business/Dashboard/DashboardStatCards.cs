@@ -1,6 +1,6 @@
 namespace Plutus.Infrastructure.Business.Dashboard;
 
-public class DashboardStats(IUserInfo userInfo, AppDbContext dbContext)
+public class DashboardStatCards(IUserInfo userInfo, AppDbContext dbContext)
 {
 
     public async Task<Response> GetAsync()

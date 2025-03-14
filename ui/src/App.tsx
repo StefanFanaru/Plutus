@@ -32,6 +32,8 @@ import { useNavigate } from "react-router";
 import Setup from "./pages/Setup/Setup";
 import Globals from "./common/globals";
 import RequistionConfirmed from "./pages/Setup/RequistionConfirmed";
+import SelectAccount from "./pages/Setup/SelectAccount";
+import ReAuthorize from "./pages/Setup/ReAuthorize";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -70,7 +72,7 @@ function App() {
     setIsServerOnlineLoading(true);
     axiosClient
       .get<AppUser>("/api/misc/app-user", {
-        timeout: 1000,
+        timeout: 5000,
       })
       .then((response) => {
         if (response.status === 200) {
@@ -79,8 +81,22 @@ function App() {
           setIsForbidden(false);
 
           Globals.appUser = response.data;
-          if (response.data.status === UserStatus.New) {
+          if (
+            response.data.status === UserStatus.New &&
+            window.location.pathname !== "/requisition-confirmed"
+          ) {
             navigate("/setup");
+          }
+
+          if (
+            response.data.status === UserStatus.RequisitionExpired &&
+            window.location.pathname !== "/requisition-confirmed"
+          ) {
+            navigate("/re-authorize");
+          }
+
+          if (response.data.status === UserStatus.RequisitionConfirmed) {
+            navigate("/select-account");
           }
         }
       })
@@ -148,6 +164,8 @@ function App() {
                     <Route path="categories" element={<Categories />} />
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="setup" element={<Setup />} />
+                    <Route path="re-authorize" element={<ReAuthorize />} />
+                    <Route path="select-account" element={<SelectAccount />} />
                     <Route
                       path="requisition-confirmed"
                       element={<RequistionConfirmed />}

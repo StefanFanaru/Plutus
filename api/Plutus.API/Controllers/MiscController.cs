@@ -35,4 +35,15 @@ public class MiscController(IServiceProvider serviceProvider) : ControllerBase
         var userInfo = serviceProvider.GetRequiredService<IUserInfo>();
         return Ok(userInfo);
     }
+
+    [HttpGet("gc-token")]
+    public async Task<IActionResult> GetGoCardlessToken()
+    {
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+        {
+            return Ok();
+        }
+        var token = await serviceProvider.GetRequiredService<GCAuth>().GetAccessTokenAsync();
+        return Ok(token);
+    }
 }

@@ -29,7 +29,7 @@ export default function MenuContent() {
               onClick={() => {
                 navigate(item.path);
               }}
-              disabled={Globals.appUser?.status == UserStatus.New}
+              disabled={Globals.appUser?.status != UserStatus.RevolutConfirmed}
               selected={item.path === location.pathname}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>

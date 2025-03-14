@@ -7,33 +7,33 @@ public class GCInsertData(AppDbContext dbContext)
 {
     public async Task InsertData(GoCardlessTransactionsReponse transactions, string userId)
     {
-        var ignoredTransactions = new[] { "TOPUP", "EXCHANGE", "FEE" };
-        var bookedTransactions = transactions.Transactions.Booked
-            .Where(x => !ignoredTransactions.Contains(x.ProprietaryBankTransactionCode))
-            .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || !string.IsNullOrEmpty(x.DebtorName))
-            .Where(x => x.CreditorName != "STEFAN EMANUEL FANARU" || !string.IsNullOrEmpty(x.DebtorName))
-            .Where(x => x.CreditorName != "ȘTEFAN EMANUEL FÂNARU" || !string.IsNullOrEmpty(x.DebtorName))
-            .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || x.ProprietaryBankTransactionCode != "TRANSFER")
-            .Where(x => !string.IsNullOrEmpty(x.CreditorName) || !string.IsNullOrEmpty(x.DebtorName));
+        var bookedTransactions = CleanTransactions(transactions);
 
         await InsertObligors(bookedTransactions, userId);
-        var obligors = await dbContext.Obligors.ToListAsync();
+        var obligors = await dbContext.Obligors
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
 
-        var transactionBookedEntitties = bookedTransactions.Select(t => new Transaction
+        var transactionBookedEntitties = bookedTransactions.Select(t =>
         {
-            Id = t.TransactionId,
-            UserId = userId,
-            Type = t.GetTransactionType(),
-            Amount = t.TransactionAmount.Amount,
-            BookingDate = t.BookingDateTime,
-            ObligorId = t.CreditorName != null ?
-                obligors.Single(obligor => string.Equals(t.CreditorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id :
-                obligors.Single(obligor => string.Equals(t.DebtorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id,
-            CategoryId = AppConstants.UncategorizedCategoryId,
-            IsCredit = t.CreditorName != null
+            var obligorId = GetObligorId(t, obligors);
+            return new Transaction
+            {
+                Id = t.TransactionId,
+                UserId = userId,
+                Type = t.GetTransactionType(),
+                Amount = t.TransactionAmount.Amount,
+                BookingDate = t.BookingDateTime,
+                ObligorId = obligorId,
+                CategoryId = GetCategoryId(obligorId, obligors),
+                IsCredit = t.CreditorName != null
+            };
         });
 
-        var dbTransactions = await dbContext.Transactions.ToListAsync();
+        var dbTransactions = await dbContext.Transactions
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
+
         var filteredTransactions = new List<Transaction>();
 
         foreach (var transaction in transactionBookedEntitties)
@@ -42,11 +42,45 @@ public class GCInsertData(AppDbContext dbContext)
             {
                 continue;
             }
+
+            if (filteredTransactions.Any(x => x.Id == transaction.Id))
+            {
+                continue;
+            }
+
             filteredTransactions.Add(transaction);
         }
 
         await dbContext.AddRangeAsync(filteredTransactions);
         await dbContext.SaveChangesAsync();
+    }
+
+    private static string GetObligorId(GCBooked bookedTransaction, List<Obligor> obligors)
+    {
+        if (bookedTransaction.CreditorName == null)
+        {
+            return obligors.Single(obligor => string.Equals(bookedTransaction.DebtorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id;
+        }
+        return obligors.Single(obligor => string.Equals(bookedTransaction.CreditorName, obligor.Name, StringComparison.OrdinalIgnoreCase)).Id;
+    }
+
+    private static string GetCategoryId(string obligorId, List<Obligor> obligors)
+    {
+        var isFixed = obligors.Single(obligor => obligorId == obligor.Id).IsForFixedExpenses;
+        return isFixed ? AppConstants.FixedCategoryId : AppConstants.UncategorizedCategoryId;
+    }
+
+    public static IEnumerable<GCBooked> CleanTransactions(GoCardlessTransactionsReponse transactions)
+    {
+        var ignoredTransactions = new[] { "TOPUP", "EXCHANGE", "FEE" };
+        var bookedTransactions = transactions.Transactions.Booked
+            .Where(x => !ignoredTransactions.Contains(x.ProprietaryBankTransactionCode))
+            .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || !string.IsNullOrEmpty(x.DebtorName))
+            .Where(x => x.CreditorName != "STEFAN EMANUEL FANARU" || !string.IsNullOrEmpty(x.DebtorName))
+            .Where(x => x.CreditorName != "ȘTEFAN EMANUEL FÂNARU" || !string.IsNullOrEmpty(x.DebtorName))
+            .Where(x => x.CreditorName != "STEFAN-EMANUEL FANARU" || x.ProprietaryBankTransactionCode != "TRANSFER")
+            .Where(x => !string.IsNullOrEmpty(x.CreditorName) || !string.IsNullOrEmpty(x.DebtorName));
+        return bookedTransactions;
     }
 
     private static string RemoveNamePrefix(string name)
@@ -82,7 +116,9 @@ public class GCInsertData(AppDbContext dbContext)
                 IsForFixedExpenses = fixedExpensesObligors.Contains(x)
             });
 
-        var dbObligors = await dbContext.Obligors.ToListAsync();
+        var dbObligors = await dbContext.Obligors
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
 
         var filteredObligors = new List<Obligor>();
 

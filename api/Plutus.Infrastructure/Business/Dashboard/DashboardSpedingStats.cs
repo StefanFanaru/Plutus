@@ -14,12 +14,18 @@ public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
         var spentLast30DaysExact = await SumTransactionsInInterval(30, 0);
         var spentLastLast30DaysExact = await SumTransactionsInInterval(60, 31);
 
+        var percentageSpendingChange = 0;
+        if (spentLastLast30DaysExact != 0)
+        {
+            percentageSpendingChange = (int)Math.Round((spentLast30DaysExact - spentLastLast30DaysExact) / spentLastLast30DaysExact * 100);
+        }
+
         var response = new Response
         {
             SpentPerDayLast25Days = [.. spentLast30Days.Take(25)],
             ProjectionNext5Days = MakeProjection([.. spentLast30Days.Select(x => x.Amount)]),
             TotalSpendLast30Days = spentLast30DaysExact,
-            PercentageSpendingChange = (int)Math.Round((spentLast30DaysExact - spentLastLast30DaysExact) / spentLastLast30DaysExact * 100)
+            PercentageSpendingChange = percentageSpendingChange
         };
 
         return response;

@@ -4,16 +4,19 @@ namespace Plutus.Infrastructure.Services;
 
 public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection> logger, AppDbContext dbContext, GCInsertData insertDataService)
 {
-
-    public async Task CollectData(string userId)
+    public async Task CollectData(string userId, int daysBack = 7)
     {
-        await GetBalanceAsync(userId);
-        await GetTransactionsAsync(userId);
+        var accountId = await dbContext.Users
+            .Where(x => x.Id == userId)
+            .Select(x => x.RevolutAccountId)
+            .FirstOrDefaultAsync();
+        await GetBalanceAsync(accountId, userId);
+        await GetTransactionsAsync(accountId, userId, daysBack);
     }
 
-    private async Task GetTransactionsAsync(string userId)
+    public async Task GetTransactionsAsync(string accountId, string userId, int daysBack)
     {
-        var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Trasations);
+        var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Trasations, userId);
 
         if (requestsInLast24h >= 4)
         {
@@ -21,13 +24,26 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
             return;
         }
 
-        var transactions = await getDataService.GetTransactionsAsync();
-        await insertDataService.InsertData(transactions, userId);
+        var transactions = await getDataService.GetTransactionsAsync(daysBack, accountId);
+        if (transactions != null && transactions.Transactions.Booked.Count != 0)
+        {
+            await insertDataService.InsertData(transactions, userId);
+        }
+
+        await dbContext.GoCardlessRequests.AddAsync(new GoCardlessRequest
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserId = userId,
+            Type = GoCardlessRequestType.Trasations,
+            MadeAt = DateTime.UtcNow
+        });
+
+        await dbContext.SaveChangesAsync();
     }
 
-    private async Task GetBalanceAsync(string userId)
+    private async Task GetBalanceAsync(string accountId, string userId)
     {
-        var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Balance);
+        var requestsInLast24h = await GetRequestsInLast24hAsync(GoCardlessRequestType.Balance, userId);
 
         if (requestsInLast24h >= 4)
         {
@@ -35,7 +51,7 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
             return;
         }
 
-        var balance = await getDataService.GetBalanceAsync();
+        var balance = await getDataService.GetBalanceAsync(accountId);
         await dbContext.BalanceAudits.AddAsync(new RevolutBalanceAudit
         {
             Id = Guid.NewGuid().ToString(),
@@ -55,9 +71,10 @@ public class GCDataCollection(GCGetData getDataService, ILogger<GCDataCollection
         await dbContext.SaveChangesAsync();
     }
 
-    private async Task<int> GetRequestsInLast24hAsync(GoCardlessRequestType type)
+    private async Task<int> GetRequestsInLast24hAsync(GoCardlessRequestType type, string userId)
     {
         return await dbContext.GoCardlessRequests
+            .Where(x => x.UserId == userId)
             .Where(x => x.Type == type)
             .Where(x => x.MadeAt > DateTime.UtcNow.AddHours(-24))
             .CountAsync();

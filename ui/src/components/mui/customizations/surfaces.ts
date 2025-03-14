@@ -2,7 +2,6 @@ import { alpha, Theme, Components } from "@mui/material/styles";
 import { gray } from "../themePrimitives";
 import type {} from "@mui/material/themeCssVarsAugmentation";
 
- 
 export const surfacesCustomizations: Components<Theme> = {
   MuiAccordion: {
     defaultProps: {
@@ -16,19 +15,15 @@ export const surfacesCustomizations: Components<Theme> = {
         backgroundColor: (theme.vars || theme).palette.background.default,
         border: "1px solid",
         borderColor: (theme.vars || theme).palette.divider,
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
         ":before": {
           backgroundColor: "transparent",
         },
         "&:not(:last-of-type)": {
           borderBottom: "none",
-        },
-        "&:first-of-type": {
-          borderTopLeftRadius: (theme.vars || theme).shape.borderRadius,
-          borderTopRightRadius: (theme.vars || theme).shape.borderRadius,
-        },
-        "&:last-of-type": {
-          borderBottomLeftRadius: (theme.vars || theme).shape.borderRadius,
-          borderBottomRightRadius: (theme.vars || theme).shape.borderRadius,
         },
       }),
     },

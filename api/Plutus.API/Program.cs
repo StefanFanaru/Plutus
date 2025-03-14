@@ -11,10 +11,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddServices();
 builder.Services.AddAuth();
 builder.Services.AddSwagger();
+builder.Services.AddBackgroundServices();
 builder.Services.AddControllers()
     .AddNewtonsoft();
-
-builder.Services.AddHostedService<GCDataBackgroundService>();
 
 builder.Services.AddDatabase(builder.Configuration);
 

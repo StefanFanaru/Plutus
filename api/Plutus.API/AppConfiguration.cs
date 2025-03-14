@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Plutus.API.Asp;
+using Plutus.API.Asp.Background;
 using Plutus.Infrastructure.Business.Categories;
 using Plutus.Infrastructure.Business.Dashboard;
 using Plutus.Infrastructure.Business.Obligors;
@@ -33,7 +34,7 @@ public static class AppConfiguration
         services.AddScoped<GCInsertData>();
         services.AddScoped<InsertSampleData>();
         services.AddScoped<ListObligors>();
-        services.AddScoped<DashboardStats>();
+        services.AddScoped<DashboardStatCards>();
         services.AddScoped<DashboardSpendingStats>();
         services.AddScoped<ListTransactions>();
         services.AddScoped<ListCategories>();
@@ -50,6 +51,14 @@ public static class AppConfiguration
         services.AddScoped<GetUserService>();
         services.AddScoped<GetRequisitionUrlService>();
         services.AddScoped<ConfirmRequisitionService>();
+        services.AddScoped<GCListAccounts>();
+        services.AddScoped<SaveSelectedAccount>();
+    }
+
+    public static void AddBackgroundServices(this IServiceCollection services)
+    {
+        services.AddHostedService<GCDataBackgroundService>();
+        services.AddHostedService<RequistionExpirationBackgroundService>();
     }
 
     public static void AddAuth(this IServiceCollection services)

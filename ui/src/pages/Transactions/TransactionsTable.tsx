@@ -15,20 +15,7 @@ import { TransactionSplitItem } from "./TransacitonSplitter";
 import "./TransactionsTable.css";
 import axiosClient, { datePickerFilter } from "../../axiosClient";
 import Constants from "../../common/constants";
-
-export interface TransactionListItem {
-  id: string;
-  bookedAt: string;
-  amount: number;
-  type: number;
-  obligorId: string;
-  obligorName: string;
-  categoryId: string;
-  categoryName: string;
-  isExcluded: boolean;
-  isSplitItem: boolean;
-  isFixedExpense: boolean;
-}
+import { TransactionListItem } from "../../common/dtos/TransactionListItem";
 
 export interface TransactionFormattedListItem {
   id: string;

@@ -1,6 +1,8 @@
 export enum UserStatus {
   New = "New",
   RevolutConfirmed = "RevolutConfirmed",
+  RequisitionConfirmed = "RequisitionConfirmed",
+  RequisitionExpired = "RequisitionExpired",
 }
 
 export interface AppUser {
