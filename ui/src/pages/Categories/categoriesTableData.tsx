@@ -84,8 +84,8 @@ export const categoryColumns: GridColDef[] = [
     renderCell: (params) => renderAmount(params.value as any),
   },
   {
-    field: "monthlyAverage",
-    headerName: "Month Average",
+    field: "monthlyMedian",
+    headerName: "Month Median",
     flex: 1,
     minWidth: 100,
     headerAlign: "right",

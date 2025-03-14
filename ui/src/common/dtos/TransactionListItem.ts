@@ -5,6 +5,7 @@ export interface TransactionListItem {
   type: number;
   obligorId: string;
   obligorName: string;
+  obligorDisplayName: string;
   categoryId: string;
   categoryName: string;
   isExcluded: boolean;

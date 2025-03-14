@@ -15,6 +15,7 @@ public class ListTransactions(IUserInfo userInfo, AppDbContext context, IDateFil
                 Type = transaction.Type,
                 ObligorId = transaction.ObligorId,
                 ObligorName = transaction.Obligor.Name,
+                ObligorDisplayName = transaction.Obligor.DisplayName,
                 CategoryId = transaction.CategoryId,
                 CategoryName = transaction.Category.Name,
                 IsExcluded = transaction.IsExcluded,

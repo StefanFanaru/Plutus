@@ -77,6 +77,15 @@ function renderTransactionAmount(amount: string, isExcluded: boolean) {
   const amountNumber = parseFloat(amount);
   return <Chip label={amount} color={getColor(amountNumber)} size="small" />;
 }
+
+function renderObligorName(name: string, displayName: string) {
+  return (
+    <Tooltip title={name}>
+      <span>{displayName}</span>
+    </Tooltip>
+  );
+}
+
 function renderActions(params: GridCellParams, props: TransactionColumnsProps) {
   return (
     <Stack
@@ -163,11 +172,16 @@ export function getTransactionsColumns(
 ): GridColDef[] {
   return [
     {
-      field: "obligorName",
+      field: "obligorDisplayName",
       headerName: "Obligor",
       flex: 1.5,
       minWidth: 180,
       maxWidth: 220,
+      renderCell: (params) =>
+        renderObligorName(
+          params.row.obligorName,
+          params.row.obligorDisplayName,
+        ),
     },
     {
       field: "amount",

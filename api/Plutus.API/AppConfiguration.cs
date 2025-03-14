@@ -10,6 +10,7 @@ using Plutus.API.Asp;
 using Plutus.API.Asp.Background;
 using Plutus.Infrastructure.Business.Categories;
 using Plutus.Infrastructure.Business.Dashboard;
+using Plutus.Infrastructure.Business.FixedExpenses;
 using Plutus.Infrastructure.Business.Obligors;
 using Plutus.Infrastructure.Business.Transactions;
 using Plutus.Infrastructure.Common;
@@ -53,6 +54,7 @@ public static class AppConfiguration
         services.AddScoped<ConfirmRequisitionService>();
         services.AddScoped<GCListAccounts>();
         services.AddScoped<SaveSelectedAccount>();
+        services.AddScoped<FixedExpensesPerMonth>();
     }
 
     public static void AddBackgroundServices(this IServiceCollection services)
@@ -133,7 +135,7 @@ public static class AppConfiguration
 
     public static void AddAllDataMigrations(this IServiceCollection services)
     {
-        var dataMigrations = Assembly.GetExecutingAssembly().GetTypes()
+        var dataMigrations = Assembly.GetAssembly(typeof(DataMigrator)).GetTypes()
             .Where(t => t.GetInterfaces().Contains(typeof(IDataMigration)))
             .ToList();
 

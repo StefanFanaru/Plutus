@@ -23,6 +23,7 @@ export interface TransactionFormattedListItem {
   amount: string;
   type: number;
   obligorName: string;
+  obligorDisplayName: string;
   categoryName: string;
   isExcluded: boolean;
   isSplitItem: boolean;

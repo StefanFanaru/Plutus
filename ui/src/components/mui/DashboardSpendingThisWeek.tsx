@@ -29,6 +29,7 @@ export default function DashboardSpendingThisWeek() {
   const [series, setSeries] = React.useState<
     MakeOptional<BarSeriesType, "type">[]
   >([]);
+  const [daysOfWeek, setDaysOfWeek] = React.useState<string[]>([]);
 
   const theme = useTheme();
   const colorPalette = [
@@ -51,6 +52,7 @@ export default function DashboardSpendingThisWeek() {
 
   useEffect(() => {
     fetchItems();
+    setDaysOfWeek(getLast7Days());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,8 +124,19 @@ export default function DashboardSpendingThisWeek() {
               {
                 scaleType: "band",
                 categoryGapRatio: 0.5,
-                data: getLast7Days(),
+                data: daysOfWeek,
                 tickPlacement: "middle",
+                valueFormatter: (day, context) => {
+                  const dayIndex = daysOfWeek.indexOf(day);
+                  const dayTotal = response?.spentByCategoryItems.reduce(
+                    (acc, item) => acc + item.data[dayIndex],
+                    0,
+                  );
+
+                  return context.location === "tick"
+                    ? day
+                    : `${day} ${addCommasToNumber(dayTotal)} RON`;
+                },
               },
             ] as any
           }

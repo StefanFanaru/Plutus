@@ -1,8 +1,8 @@
 using Plutus.API;
 using Plutus.API.Asp.Background;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.AddSerilog();
 
 builder.Services.AddMemoryCache();

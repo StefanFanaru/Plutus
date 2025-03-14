@@ -6,7 +6,11 @@ import {
 } from "@mui/x-data-grid";
 import { getObligorsColumns } from "./tableData";
 import { useEffect, useState } from "react";
-import { addCommasToNumber, makePrettyDate } from "../../common/helpers";
+import {
+  addCommasToNumber,
+  calculateMedian,
+  makePrettyDate,
+} from "../../common/helpers";
 import { ListResponse } from "../../common/dtos/ListResponse";
 import { ListRequest } from "../../common/dtos/ListRequest";
 import axiosClient from "../../axiosClient";
@@ -16,30 +20,31 @@ export interface ObligorsColumnsProps {
 }
 
 export interface ObligorListItem {
-  id: string;
-  name: string;
+  displayName: string;
   transactionsThisMonthCount: number;
   totalTransactionsCount: number;
   ammountCreditedThisMonth: number;
   totalAmmountCredited: number;
   latestTransaction: string;
   isForFixedExpenses: boolean;
+  obligorIds: string[];
 }
 
 export interface ObligorAmmountPerMonth {
-  obligorId: string;
+  obligorDisplayName: string;
   ammountCreditedPerMonth: { [key: string]: number };
 }
 
 export interface ObligorFormattedListItem {
   id: string;
-  name: string;
+  displayName: string;
   monthlyAmount: string;
   ammountCreditedThisMonth: string;
   totalAmmountCredited: string;
   latestTransaction: string;
   transactionsPerMonth: number[];
   isForFixedExpenses: boolean;
+  obligorIds: string[];
 }
 
 export default function ObligorsTable() {
@@ -74,7 +79,7 @@ export default function ObligorsTable() {
     setObligors(formatResponse(response.data.items));
     setTotalCount(response.data.totalCount);
     fetchObligorsTransactionsPerMonth(
-      response.data.items.map((obligor) => obligor.id),
+      response.data.items.map((obligor) => obligor.displayName),
     );
   };
 
@@ -97,18 +102,18 @@ export default function ObligorsTable() {
     setObligors((prev) =>
       prev.map((obligor) => {
         const amounts = transactionsPerMonth.find(
-          (transaction) => transaction.obligorId === obligor.id,
+          (transaction) =>
+            transaction.obligorDisplayName === obligor.displayName,
         );
-        const averageAmount =
-          Object.values(amounts?.ammountCreditedPerMonth ?? {}).reduce(
-            (acc, cur) => acc + cur,
-            0,
-          ) / Object.keys(amounts?.ammountCreditedPerMonth ?? {}).length;
+        const monthlyAmounts = amounts
+          ? Object.values(amounts.ammountCreditedPerMonth)
+          : [];
+        const median = calculateMedian(monthlyAmounts);
+
         return {
           ...obligor,
-          monthlyAverage: addCommasToNumber(
-            isNaN(averageAmount) ? 0 : averageAmount,
-          ),
+          monthlyMedian: addCommasToNumber(median),
+          id: obligor.displayName,
           transactionsPerMonth: amounts
             ? Object.values(amounts.ammountCreditedPerMonth)
             : [],
@@ -143,6 +148,7 @@ export default function ObligorsTable() {
     return response.map((obligor) => {
       return {
         ...obligor,
+        id: obligor.displayName,
         ammountCreditedThisMonth: addCommasToNumber(
           obligor.ammountCreditedThisMonth,
         ),
@@ -154,10 +160,13 @@ export default function ObligorsTable() {
     });
   };
 
-  function updateObligorFixedExpense(obligorId: string, value: boolean) {
+  function updateObligorFixedExpense(
+    obligorDisplayName: string,
+    value: boolean,
+  ) {
     setObligors((prev) =>
       prev.map((obligor) => {
-        if (obligor.id === obligorId) {
+        if (obligor.displayName === obligorDisplayName) {
           return {
             ...obligor,
             isForFixedExpenses: value,
@@ -169,21 +178,24 @@ export default function ObligorsTable() {
     );
   }
 
-  async function onObligorFixedChange(obligorId: string, value: boolean) {
-    updateObligorFixedExpense(obligorId, value);
+  async function onObligorFixedChange(
+    obligorDisplayName: string,
+    value: boolean,
+  ) {
+    updateObligorFixedExpense(obligorDisplayName, value);
     const response = await axiosClient.post(
       "/api/Obligors/set-fixed-expense",
       {},
       {
         params: {
-          obligorId,
+          obligorDisplayName: obligorDisplayName,
           value,
         },
       },
     );
 
     if (response.status !== 200) {
-      updateObligorFixedExpense(obligorId, value);
+      updateObligorFixedExpense(obligorDisplayName, value);
     }
   }
 

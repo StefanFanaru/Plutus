@@ -34,6 +34,7 @@ import Globals from "./common/globals";
 import RequistionConfirmed from "./pages/Setup/RequistionConfirmed";
 import SelectAccount from "./pages/Setup/SelectAccount";
 import ReAuthorize from "./pages/Setup/ReAuthorize";
+import FixedExpenses from "./pages/FixedExpenses/FixedExpenses";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -59,9 +60,18 @@ function App() {
       !auth.isLoading &&
       !hasTriedSignin
     ) {
+      const pathAndQuery = window.location.pathname + window.location.search;
+      localStorage.setItem("authRedirectPath", pathAndQuery);
       auth.signinRedirect();
       setHasTriedSignin(true);
+    } else if (auth.isAuthenticated && !auth.isLoading) {
+      const pathAndQuery = localStorage.getItem("authRedirectPath");
+      if (pathAndQuery) {
+        localStorage.removeItem("authRedirectPath");
+        navigate(pathAndQuery);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, hasTriedSignin]);
 
   const props = {
@@ -163,6 +173,7 @@ function App() {
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="categories" element={<Categories />} />
                     <Route path="analytics" element={<Analytics />} />
+                    <Route path="fixed-expenses" element={<FixedExpenses />} />
                     <Route path="setup" element={<Setup />} />
                     <Route path="re-authorize" element={<ReAuthorize />} />
                     <Route path="select-account" element={<SelectAccount />} />
@@ -170,6 +181,7 @@ function App() {
                       path="requisition-confirmed"
                       element={<RequistionConfirmed />}
                     />
+                    <Route path="*" element={<Dashboard />} />
                   </Routes>
                 )
               ) : (

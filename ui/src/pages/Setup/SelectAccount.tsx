@@ -217,14 +217,26 @@ function SelectAccount() {
                             <TableHead>
                               <TableRow>
                                 <TableCell
-                                  sx={{ minWidth: "180px", maxWidth: "220px" }}
+                                  sx={{
+                                    fontWeight: "bold",
+                                    minWidth: "180px",
+                                    maxWidth: "220px",
+                                  }}
                                 >
                                   Obligor Name
                                 </TableCell>
-                                <TableCell align="left">Amount</TableCell>
+                                <TableCell
+                                  sx={{ fontWeight: "bold" }}
+                                  align="left"
+                                >
+                                  Amount
+                                </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ minWidth: "145px" }}
+                                  sx={{
+                                    fontWeight: "bold",
+                                    minWidth: "145px",
+                                  }}
                                 >
                                   Booked at
                                 </TableCell>

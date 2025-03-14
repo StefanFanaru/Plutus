@@ -75,3 +75,62 @@ export function makePrettyDate(value: string): string {
 
   return `${dayOfWeekAsString(date.getDay())} ${hoursAndMinutes(hours, minutes)}`;
 }
+
+export function calculateMedian(numbers: number[]): number {
+  if (numbers.length === 0) {
+    return 0;
+  }
+
+  numbers = numbers.filter((n) => n > 0 || n < 0);
+  // Sort the array in ascending order
+  const sortedNumbers = numbers.slice().sort((a, b) => a - b);
+  const midIndex = Math.floor(sortedNumbers.length / 2);
+
+  // If the length of the array is odd, return the middle element
+  if (sortedNumbers.length % 2 === 1) {
+    return sortedNumbers[midIndex];
+  } else {
+    // If the length is even, return the average of the two middle elements
+    return (sortedNumbers[midIndex - 1] + sortedNumbers[midIndex]) / 2;
+  }
+}
+
+export const shortMonthsMapping = {
+  Jan: "January",
+  Feb: "February",
+  Mar: "March",
+  Apr: "April",
+  May: "May",
+  Jun: "June",
+  Jul: "July",
+  Aug: "August",
+  Sep: "September",
+  Oct: "October",
+  Nov: "November",
+  Dec: "December",
+};
+
+export function getLast12Months() {
+  const result: string[] = [];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const today = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date(today);
+    date.setMonth(today.getMonth() - i);
+    result.push(months[date.getMonth()]);
+  }
+  return result;
+}

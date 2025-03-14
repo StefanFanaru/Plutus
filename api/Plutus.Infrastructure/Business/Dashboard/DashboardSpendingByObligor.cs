@@ -30,7 +30,7 @@ public class DashboardSpendingByObligor(IUserInfo userInfo, AppDbContext dbConte
             response.Items.Add(new SpentByObligorItem
             {
                 ObligorId = obligor.Id,
-                ObligorName = obligor.Name,
+                ObligorName = obligor.DisplayName,
                 Amount = spent,
                 Percentage = percentage
             });

@@ -15,15 +15,15 @@ public class ObligorsController(IServiceProvider serviceProvider) : ControllerBa
     }
 
     [HttpPost("month-ammount")]
-    public async Task<IActionResult> ListAmmountPerMonth(List<string> ids)
+    public async Task<IActionResult> ListAmmountPerMonth(List<string> displayNames)
     {
-        return Ok(await serviceProvider.GetRequiredService<ListObligors>().GetAmmountCreditedPerMonth(ids));
+        return Ok(await serviceProvider.GetRequiredService<ListObligors>().GetAmmountCreditedPerMonth(displayNames));
     }
 
     [HttpPost("set-fixed-expense")]
-    public async Task<IActionResult> ListAmmountPerMonth(string obligorId, bool value)
+    public async Task<IActionResult> ListAmmountPerMonth(string obligorDisplayName, bool value)
     {
-        var success = await serviceProvider.GetRequiredService<ChangeObligorFixedExpense>().Set(obligorId, value);
+        var success = await serviceProvider.GetRequiredService<ChangeObligorFixedExpense>().Set(obligorDisplayName, value);
         return success ? Ok() : NotFound();
     }
 }

@@ -39,7 +39,6 @@ public class DashboardSpendingStats(IUserInfo userInfo, AppDbContext dbContext)
             .Where(x => !x.Obligor.IsForFixedExpenses)
             .Where(x => x.IsCredit)
             .Where(x => !x.IsExcluded)
-            .Where(x => !x.IsExcluded)
             .GroupBy(x => x.BookingDate.Date)
             .Select(g => new
             {

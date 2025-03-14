@@ -1,4 +1,4 @@
-import { Checkbox, Chip } from "@mui/material";
+import { Checkbox, Chip, Tooltip } from "@mui/material";
 import { SparkLineChart } from "@mui/x-charts";
 import { GridCellParams, GridColDef } from "@mui/x-data-grid";
 import {
@@ -13,9 +13,19 @@ function renderForFixedExepenses(
   return (
     <Checkbox
       checked={obligor.isForFixedExpenses}
-      onChange={(e) => onFixedExpenseChange(obligor.id, e.target.checked)}
+      onChange={(e) =>
+        onFixedExpenseChange(obligor.displayName, e.target.checked)
+      }
       sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
     />
+  );
+}
+
+function renderObligorName(name: string, displayName: string) {
+  return (
+    <Tooltip title={name}>
+      <span>{displayName}</span>
+    </Tooltip>
   );
 }
 
@@ -85,7 +95,14 @@ function renderSparklineCell(params: GridCellParams<SparkLineData, any>) {
 
 export function getObligorsColumns(props: ObligorsColumnsProps): GridColDef[] {
   return [
-    { field: "name", headerName: "Name", flex: 1.5, minWidth: 200 },
+    {
+      field: "displayName",
+      headerName: "Name",
+      flex: 1.5,
+      minWidth: 200,
+      renderCell: (params) =>
+        renderObligorName(params.row.name, params.row.displayName),
+    },
     {
       field: "isForFixedExpenses",
       headerName: "Fixed Expenses",
@@ -98,8 +115,8 @@ export function getObligorsColumns(props: ObligorsColumnsProps): GridColDef[] {
         ),
     },
     {
-      field: "monthlyAverage",
-      headerName: "Month Average",
+      field: "monthlyMedian",
+      headerName: "Month Median",
       flex: 1,
       minWidth: 100,
       headerAlign: "right",

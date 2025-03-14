@@ -8,6 +8,7 @@ public class TransactionListItem
     public TransactionType? Type { get; set; }
     public string ObligorId { get; set; }
     public string ObligorName { get; set; }
+    public string ObligorDisplayName { get; set; }
     public string CategoryId { get; set; }
     public string CategoryName { get; set; }
     public bool IsExcluded { get; set; }

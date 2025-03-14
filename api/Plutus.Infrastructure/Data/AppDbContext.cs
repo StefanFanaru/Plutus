@@ -41,6 +41,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasIndex(e => e.Name).IsUnique();
+
             entity.HasData(
                 new Category
                 {
@@ -52,6 +53,41 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = AppConstants.FixedCategoryId,
                     Name = "Fixed"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d03",
+                    Name = "Food"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d04",
+                    Name = "Vice"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d05",
+                    Name = "Transport"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d07",
+                    Name = "Fun"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d08",
+                    Name = "House"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d09",
+                    Name = "Gift"
+                },
+                new Category
+                {
+                    Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d33",
+                    Name = "Life"
                 }
             );
         });

@@ -82,7 +82,18 @@ namespace Plutus.Infrastructure.Data.Migrations
                 schema: "plutus",
                 table: "Categories",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { "f47ac10b-58cc-4372-a567-0e02b2c3d479", "Uncategorized" });
+                values: new object[,]
+                {
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d03", "Food" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d04", "Vice" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d05", "Transport" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d07", "Fun" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d08", "House" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d09", "Gift" },
+                    { "67afadc8-75d1-a130-a6cb-29cab5fd0d33", "Life" },
+                    { "f47ac10b-58cc-4372-a567-0e02b2c3d479", "Uncategorized" },
+                    { "d9b8c7b0-3d64-4a5e-9b3f-3e8c9e8b1f5a", "Fixed" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",

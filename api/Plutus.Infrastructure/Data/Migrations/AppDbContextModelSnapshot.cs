@@ -51,6 +51,41 @@ namespace Plutus.Infrastructure.Data.Migrations
                         {
                             Id = "d9b8c7b0-3d64-4a5e-9b3f-3e8c9e8b1f5a",
                             Name = "Fixed"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d03",
+                            Name = "Food"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d04",
+                            Name = "Vice"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d05",
+                            Name = "Transport"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d07",
+                            Name = "Fun"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d08",
+                            Name = "House"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d09",
+                            Name = "Gift"
+                        },
+                        new
+                        {
+                            Id = "67afadc8-75d1-a130-a6cb-29cab5fd0d33",
+                            Name = "Life"
                         });
                 });
 

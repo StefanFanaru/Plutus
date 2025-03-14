@@ -25,12 +25,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_DataMigrations", x => x.Id);
                 });
-
-            migrationBuilder.InsertData(
-                schema: "plutus",
-                table: "Categories",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { "d9b8c7b0-3d64-4a5e-9b3f-3e8c9e8b1f5a", "Fixed" });
         }
 
         /// <inheritdoc />
@@ -40,11 +34,6 @@ namespace Plutus.Infrastructure.Data.Migrations
                 name: "DataMigrations",
                 schema: "plutus");
 
-            migrationBuilder.DeleteData(
-                schema: "plutus",
-                table: "Categories",
-                keyColumn: "Id",
-                keyValue: "d9b8c7b0-3d64-4a5e-9b3f-3e8c9e8b1f5a");
         }
     }
 }

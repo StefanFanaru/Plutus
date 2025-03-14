@@ -6,17 +6,16 @@ public class ListObligors(IUserInfo userInfo, AppDbContext context)
     {
         var query = context.Obligors
             .ApplyUserFilter(userInfo.Id)
-            .Select(obligor => new ObligorListItem
+            .GroupBy(obligor => obligor.DisplayName)
+            .Select(group => new ObligorListItem
             {
-                Id = obligor.Id,
-                Name = obligor.Name,
-                TransactionsThisMonthCount = context.Transactions.Count(t => t.ObligorId == obligor.Id && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30)),
-                TotalTransactionsCount = context.Transactions.Count(t => t.ObligorId == obligor.Id),
-                AmmountCreditedThisMonth = context.Transactions.Where(t => t.ObligorId == obligor.Id && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30)).Sum(t => t.Amount),
-                TotalAmmountCredited = context.Transactions.Where(t => t.ObligorId == obligor.Id && t.IsCredit).Sum(t => t.Amount),
-                LatestTransaction = context.Transactions.Where(t => t.ObligorId == obligor.Id).OrderByDescending(t => t.BookingDate).Select(t => t.BookingDate).FirstOrDefault(),
-                IsForFixedExpenses = obligor.IsForFixedExpenses
-
+                DisplayName = group.Key,
+                TransactionsThisMonthCount = context.Transactions.Count(t => group.Select(g => g.Id).Contains(t.ObligorId) && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30)),
+                TotalTransactionsCount = context.Transactions.Count(t => group.Select(g => g.Id).Contains(t.ObligorId)),
+                AmmountCreditedThisMonth = context.Transactions.Where(t => group.Select(g => g.Id).Contains(t.ObligorId) && t.IsCredit && t.BookingDate.Date >= DateTime.UtcNow.AddDays(-30)).Sum(t => t.Amount),
+                TotalAmmountCredited = context.Transactions.Where(t => group.Select(g => g.Id).Contains(t.ObligorId) && t.IsCredit).Sum(t => t.Amount),
+                LatestTransaction = context.Transactions.Where(t => group.Select(g => g.Id).Contains(t.ObligorId)).OrderByDescending(t => t.BookingDate).Select(t => t.BookingDate).FirstOrDefault(),
+                IsForFixedExpenses = group.First().IsForFixedExpenses,
             })
             .Where(obligor => obligor.TotalTransactionsCount > 0)
             .ApplyFilter(request.Filter);
@@ -30,23 +29,22 @@ public class ListObligors(IUserInfo userInfo, AppDbContext context)
             Items = await pagedQuery.ToListAsync(),
             TotalCount = await query.CountAsync()
         };
-
     }
 
-    public async Task<List<ObligorsCreditedPerMonthItem>> GetAmmountCreditedPerMonth(List<string> ids)
+    public async Task<List<ObligorsCreditedPerMonthItem>> GetAmmountCreditedPerMonth(List<string> displayNames)
     {
         var ammountCreditedPerMonth = await context.Transactions
-            .Where(t => ids.Contains(t.ObligorId))
+            .Where(t => displayNames.Contains(t.Obligor.DisplayName))
             .Where(t => t.BookingDate >= DateTime.UtcNow.AddMonths(-11))
-            .GroupBy(t => new { t.ObligorId, t.BookingDate.Year, t.BookingDate.Month })
-            .Select(g => new { g.Key.ObligorId, g.Key.Month, Sum = g.Sum(t => t.Amount) })
+            .GroupBy(t => new { t.Obligor.DisplayName, t.BookingDate.Year, t.BookingDate.Month })
+            .Select(g => new { g.Key.DisplayName, g.Key.Month, Sum = g.Sum(t => t.Amount) })
             .ToListAsync();
 
         var ammountCreditedPerMonthItems = ammountCreditedPerMonth
-            .GroupBy(t => t.ObligorId)
+            .GroupBy(t => t.DisplayName)
             .Select(g => new ObligorsCreditedPerMonthItem
             {
-                ObligorId = g.Key,
+                ObligorDisplayName = g.Key,
                 AmmountCreditedPerMonth = g.ToDictionary(t => t.Month, t => t.Sum)
             }).ToList();
 
@@ -65,8 +63,7 @@ public class ListObligors(IUserInfo userInfo, AppDbContext context)
 
     public class ObligorListItem
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
         public int TransactionsThisMonthCount { get; set; }
         public int TotalTransactionsCount { get; set; }
         public decimal AmmountCreditedThisMonth { get; set; }
@@ -77,7 +74,7 @@ public class ListObligors(IUserInfo userInfo, AppDbContext context)
 
     public class ObligorsCreditedPerMonthItem
     {
-        public string ObligorId { get; set; }
+        public string ObligorDisplayName { get; set; }
         public Dictionary<int, decimal> AmmountCreditedPerMonth { get; set; }
     }
 }

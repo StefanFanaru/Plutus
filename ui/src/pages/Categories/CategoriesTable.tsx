@@ -6,7 +6,11 @@ import {
 } from "@mui/x-data-grid";
 import { categoryColumns } from "./categoriesTableData";
 import { useEffect, useState } from "react";
-import { addCommasToNumber, makePrettyDate } from "../../common/helpers";
+import {
+  addCommasToNumber,
+  calculateMedian,
+  makePrettyDate,
+} from "../../common/helpers";
 import { ListRequest } from "../../common/dtos/ListRequest";
 import { ListResponse } from "../../common/dtos/ListResponse";
 import axiosClient from "../../axiosClient";
@@ -91,17 +95,14 @@ export default function CategoriesTable() {
           (amount) => amount.categoryId === category.id,
         );
 
-        const averageAmount =
-          Object.values(amounts?.ammountCreditedPerMonth ?? {}).reduce(
-            (acc, cur) => acc + cur,
-            0,
-          ) / Object.keys(amounts?.ammountCreditedPerMonth ?? {}).length;
+        const monthlyAmounts = amounts
+          ? Object.values(amounts.ammountCreditedPerMonth)
+          : [];
+        const median = calculateMedian(monthlyAmounts);
 
         return {
           ...category,
-          monthlyAverage: addCommasToNumber(
-            isNaN(averageAmount) ? 0 : averageAmount,
-          ),
+          monthlyMedian: addCommasToNumber(median),
           amountPerMonth: amounts
             ? Object.values(amounts.ammountCreditedPerMonth)
             : [],

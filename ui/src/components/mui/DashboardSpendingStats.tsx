@@ -57,7 +57,6 @@ export default function DashboardSpendingStats() {
 
     setSpendingStats({
       id: "direct",
-      label: "Spent",
       showMark: false,
       curve: "linear",
       stack: "total",
