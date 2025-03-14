@@ -15,7 +15,7 @@ export default function Header() {
     const text = NavMenuItems.find(
       (item) => item.path === location.pathname,
     )?.text;
-    setHeaderText((text ?? "") == "Dashboard" ? "" : text!);
+    setHeaderText(text || "");
   }, [location]);
 
   return (
@@ -37,8 +37,6 @@ export default function Header() {
       </Typography>
       <Stack direction="row" sx={{ gap: 1 }}>
         {/* <Search /> */}
-        {/* <CustomDatePicker /> */}
-        {/* <DatePickerButton /> */}
         <CustomDateRangePicker />
         <Link
           underline="none"
